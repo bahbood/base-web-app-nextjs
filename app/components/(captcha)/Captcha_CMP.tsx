@@ -1,9 +1,8 @@
 // app/components/(captchCMP)/CaptchaCMP.tsx
 "use client"
 
-import { createCaptchaImageAction } from "@/app/components/(captchCMP)/action/createCaptchaImageAction"
-import { useEffect, useState, useRef, useCallback, Ref, useImperativeHandle } from "react"
-import CaptchaInputCMP, { InputCMPHandler } from "./captchaInput"
+import { createCaptchaImageAction } from "@/app/components/(captcha)/action/createCaptchaImageAction"
+import { useEffect, useState, useRef, useCallback, Ref,} from "react"
 
 interface CaptchaData {
   captchaId: string
@@ -14,8 +13,10 @@ export interface CaptchaHandler {
   clear: () => void;
   }
 
-export default function Captcha_CMP({ className, onCaptchaUserInputChange,onCaptchaIdChange, ref}: { 
+export default function CaptchaCMP({ className, name , vlaue , onCaptchaUserInputChange,onCaptchaIdChange, ref}: { 
   className: string
+  name:string
+  vlaue:string
   onCaptchaUserInputChange?: (userInputText: string) => void 
   onCaptchaIdChange?: (captchaId: string) => void
   ref?:Ref<CaptchaHandler>
@@ -27,7 +28,7 @@ export default function Captcha_CMP({ className, onCaptchaUserInputChange,onCapt
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [hasCaptcha, setHasCaptcha] = useState(false)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
-  const Inpuuts_ref=useRef<InputCMPHandler>(null)
+
   // توقف تایمر
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
@@ -37,17 +38,7 @@ export default function Captcha_CMP({ className, onCaptchaUserInputChange,onCapt
   }, [])
 
  
-  // تابع پاک کردن مقدار ورودی های کنترل برای ارائه والد کامپوننت
-useImperativeHandle(ref , ()=>({
-  // پاک کردن مقادیر وارد شده در ورودی ها
-  clear:()=>{
-    // پاک کردن کامپوننت ورودی ها
-    Inpuuts_ref.current?.clear();
-    stopTimer()
-    setTimeLeft(0)
-    setIsExpired(true)
-  }
-}),[stopTimer])
+ 
 
   // شروع تایمر
   const startTimer = useCallback(() => {
@@ -74,7 +65,7 @@ useImperativeHandle(ref , ()=>({
     // ********** پاک کردن ورودی کاربر **********
     setUserInputText("")
     onCaptchaUserInputChange?.("")
-    Inpuuts_ref.current?.clear()
+    
 
     try {
       const newCaptcha = await createCaptchaImageAction()
@@ -129,7 +120,7 @@ useImperativeHandle(ref , ()=>({
 
   return (
     <div className={`${className}`}>
-      <div className="flex flex-col w-full h-full items-center gap-1 p-2 border border-dashed border-gray-500/50 rounded-md">
+      <div className="flex flex-col w-full h-full items-center gap-1 ">
         <div dir="ltr" className="flex w-full justify-between rounded-sm">
           <button 
             className="flex w-10 aspect-square justify-evenly items-center py-1 rounded-md group bg-gray-200 hover:bg-gray-100 cursor-pointer disabled:opacity-50" 
@@ -186,15 +177,7 @@ useImperativeHandle(ref , ()=>({
           <div  style={{width : (timeLeft*(10/6))+"%"}}  className={` h-1 bg-gray-400 rounded-xs `}  >  </div>
         </div>
 
-        {/* کامپوننت ورودی کپچا */}
-        <CaptchaInputCMP 
-          className="w-full"
-          isExpired={isExpired || !hasCaptcha}
-          disabled={!hasCaptcha}
-          onComplete={completeUserCodeInput}
-          onChange={handleUserInputChange}
-          ref={Inpuuts_ref}
-        />
+      
       </div>
     </div>
   )

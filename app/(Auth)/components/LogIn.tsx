@@ -6,6 +6,8 @@ import Captcha_CMP, { CaptchaHandler } from "@/app/components/(captchCMP)/Captch
 import { useRouter } from "next/navigation"
 import FlyoutLayout from "@/app/components/(Flyouts)/FlyoutLayout"
 import { flyoutPageEnum, useFlyoutPage, } from "@/app/components/(Flyouts)/(Provider)/FlyoutPageContextProvider"
+import CaptchaCMP from "@/app/components/(captcha)/Captcha_CMP"
+import Captcha_InputCMP from "@/app/components/(captcha)/captcha_Input_CMP"
 // import { AuthPageEnum } from "@/app/components/(Flyouts)/(Provider)/FlyoutPageContextProvider"
 // import { AuthContext } from "@/app/components/(Flyouts)/AuthLayoutCMP"
 
@@ -114,7 +116,7 @@ export default function LogIn( {ref }: {ref?:Ref<LoginHandlerRef>} ) {
                               />
                           </div>
                           {/* captcha ---------- */}
-                          <div className="flex flex-col w-[95%] sm:w-[85%] gap-1 mt-2">
+                          <div className="flex flex-col w-[95%] sm:w-[85%] gap-1 mt-2 ">
                               <div className="flex w-full ">
                                   <label className="text-right text-[10px] pr-2">کد امنیتی :</label>
                                   {state?.errors?.userCaptcha && (
@@ -124,15 +126,23 @@ export default function LogIn( {ref }: {ref?:Ref<LoginHandlerRef>} ) {
                                   
                               </div>
 
-                              <input type="hidden" name="captchaId" value={captchaId} />
+                              {/* <input type="hidden" name="captchaId" value={captchaId} />
                               <input type="hidden" name="userCaptchaInput" value={userCaptchaInput} />
                               <Captcha_CMP
                                   className="w-full flex gap-1"
                                   ref={handleCapchCMP_methodes}
                                   onCaptchaIdChange={handleCaptchaIdChange}
                                   onCaptchaUserInputChange={handleUserCaptchaInput}
-                              />
+                              /> */}
+                              <div className="flex flex-col w-full gap-2  p-2 border border-dashed border-gray-500/50 rounded-md">
+                                  <CaptchaCMP className="w-full flex" name="captchaId" vlaue="" />
+                                  <Captcha_InputCMP name="userCaptchaInput" value="" />
+                              </div>
+
+
+
                           </div>
+                                   
                           {/* message place ---------- */}
                           <div className="flex py-1 mt-4">
                               {state?.errors?.message && (
