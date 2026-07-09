@@ -166,6 +166,10 @@ export default function SideMenu({ref }: {ref?:Ref<SideMenuHandlerRef>}) {
 
                 </Link>
                 </div>
+                <div className='flex flex-col w-[90%] mx-auto gap-2 p-2'>
+                <Link href='/slides' onClick={()=>setIsOpen(false)}>مدیریت اسلاید ها </Link>
+                <Link href='/storeActivation' onClick={()=>setIsOpen(false)} >فعال سازی فروشگاه</Link>
+                </div>
             </div>
           </motion.div>
         </>

@@ -4,15 +4,15 @@ import { decryptSession, encryptSession,  updateSession } from '@/app/(Auth)/lib
 import { cookies } from 'next/headers'
 
 // 1. Specify protected and public routes
-const protectedRoutes = ['/store']
-const publicRoutes = ['/']
+const protectedRoutes = ['/store', '/storeProfile', '/storeActivation', '/productsList']
+const publicRoutes = ['/',]
 
 const AdminPathes = ["/newsAgenciesList"]
 
 export default async function proxy(req: NextRequest) {
   // 2. Check if the current route is protected or public
   const path = req.nextUrl.pathname
-  const isProtectedRoute = protectedRoutes.includes(path)
+  const isProtectedRoute = protectedRoutes.some((route) => path === route || path.startsWith(route + '/'))
   const isPublicRoute = publicRoutes.includes(path)
   
   console.log(' *  > proxy :  path :', path)
