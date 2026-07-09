@@ -28,7 +28,8 @@ const menuVariants = {
   },
 }
 
- export default function FlyoutLayout({children,onCloseMe,isOpen}:{children?:ReactNode,onCloseMe:()=>void,isOpen:boolean}){
+ export default function FlyoutLayout({children,onCloseMe,isOpen,popUpMessage_show  }:
+  {children?:ReactNode,onCloseMe:()=>void,isOpen:boolean , popUpMessage_show?:( caption:string,message:string,show:boolean ) => boolean }){
     return(
       <AnimatePresence mode="wait">
         {isOpen && (
@@ -84,6 +85,23 @@ const menuVariants = {
 
               </div>
 
+              {/* popup message box */}
+              { popUpMessage_show &&
+              
+              <div className="absolute flex w-full h-full justify-center items-center z-50 bg-white/40 backdrop-blur-lg">
+                  <div className="flex flex-col landscape:w-sm portrait:w-[90%] min-h-40 bg bg-white border border-gray-500 rounded-sm ">
+                      <span className="text-xs text-white block bg-sky-600 w-full p-3 "> مانا مود :</span>
+                      <div className="flex flex-col items-center w-full flex-1 bg-gray-100 px-3 py-2">
+
+                        <p className="block w-full text-justify indent-1 text-xs">
+                         
+                        </p>
+                        <button className="w-[85%]  py-3 bg-lime-500 text-white text-center text-md rounded-sm my-3 cursor-pointer"> متوجه شدم </button>
+
+                      </div>
+                  </div>
+              </div>
+            }
             </motion.div>
 
           </motion.div>

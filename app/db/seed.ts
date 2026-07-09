@@ -14,19 +14,14 @@ async function main() {
       // نقش‌های ضروری
       const result = await db.insert(users).values([
         { 
-           user_name: 'admin',
-           password:hashedPass ,
-           role: "admin",
-           name:"محمود",
-           family:"هنرمند",
-           avatar:"default",
-           is_active:true,
-           mobile_number:"09153754329",
-           mobile_number_isvalid:true,
-           email:"a@a.com",
-           email_isvalid:true,
-    
+           user_name: 'admin', password:hashedPass , role: "admin",     name:"محمود", family:"هنرمند", avatar:"default", is_active:true,
+           mobile_number:"09153754329", mobile_number_isvalid:true, email:"a@a.com",email_isvalid:true,
           },
+          {
+            user_name:"mahmood", password:hashedPass,role:"user",     name:"منوت",family:"",avatar:"default",is_active:true ,
+            mobile_number:"09153754329" , mobile_number_isvalid:true , email:"a@a.com", email_isvalid:true , 
+            news_agency_active:true , news_agency_pin:hashedPass , store_active:true,store_pin:hashedPass , serviceman_active:true,serviceman_pin:hashedPass
+          }
       ]).onConflictDoNothing({target: users.user_name }); // برگردونه رکورد درج شده رو
       
       console.log('✅ Data inserted:', result);
@@ -41,9 +36,7 @@ async function main() {
 
   async function seedData_slides() {
     try {
-      
-
-      // نقش‌های ضروری
+      // slides  
       const result = await db.insert(slides).values([
         { name: 'S1', image_L:'S1_L.jpg', image_P:"S1_P.jpg",
           show_startDate:new Date() ,show_endDate:new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) ,
