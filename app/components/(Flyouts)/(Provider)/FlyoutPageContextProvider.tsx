@@ -9,7 +9,13 @@ import LogOut, { LogOutHandlerRef } from '@/app/(Auth)/components/LogOut'
 import Register, { RegisterHandlerRef } from '@/app/(Auth)/components/Register'
 import Profile, { ProfileHandlerRef } from '@/app/(Auth)/components/Profile'
 
+type MessageBoxState = {
+    show: boolean
+    caption: string
+    message: string
 
+    type?: "info" | "success" | "warning" | "error"
+}
 
 // FlyoutPageContextType **************************************************************************
 interface I_FlyoutPageProviderContext{
@@ -19,6 +25,17 @@ interface I_FlyoutPageProviderContext{
   logOutPage_toggleShow:()=>void
   ProfilePage_toggleShow:()=>void
   RegisterPage_toggleShow:()=>void
+
+   messageBox_show(
+    caption: string,
+    message: string,
+    type?: MessageBoxState["type"]
+): void
+
+    messageBox_close: () => void
+
+    messageBox: MessageBoxState
+
   user: logined_User_Info | null;
   setUser: (user: logined_User_Info | null) => void;
 }
@@ -41,6 +58,12 @@ export function FlyoutPageProvider({ children , initialUser = null }: { children
   //
    const [user, setUser] = useState<logined_User_Info | null>(initialUser);
 
+   const [messageBox, setMessageBox] = useState<MessageBoxState>({
+    show: false,
+    caption: "",
+    message: ""
+})
+
    const SideMenuHandler= useRef<SideMenuHandlerRef>(null)
    const LogInHandler= useRef<LoginHandlerRef>(null)
   const LogOutHandler= useRef<LogOutHandlerRef>(null)
@@ -53,7 +76,34 @@ export function FlyoutPageProvider({ children , initialUser = null }: { children
                   LogOutHandler.current?.closeMe();
                   ProfileHandler.current?.closeMe();
                   RegisterHandler.current?.closeMe();
+                  messageBox_close();
   }
+
+ const messageBox_show = (
+    caption: string,
+    message: string,
+    type: MessageBoxState["type"] = "info"
+) => {
+
+    setMessageBox({
+        show: true,
+        caption,
+        message,
+        type
+    })
+
+}
+
+const messageBox_close = () => {
+
+    setMessageBox({
+        show: false,
+        caption: "",
+        message: "",
+        type: "info"
+    })
+
+}
 
   const CloseMe_and_Open=(replacePage : flyoutPageEnum)=>{
     closeAllForm();
@@ -96,6 +146,12 @@ export function FlyoutPageProvider({ children , initialUser = null }: { children
                 ,
                 RegisterPage_toggleShow :()=>{ closeAllForm(); RegisterHandler.current?.ToggleShow() }
                 ,
+
+messageBox,
+messageBox_show,
+messageBox_close
+
+                ,
                 user
                 ,
                 setUser
@@ -127,3 +183,6 @@ export function useFlyoutPage() {
   }
   return context
 }
+
+
+
