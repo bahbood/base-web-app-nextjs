@@ -68,17 +68,17 @@ export default function SideMenu({ref }: {ref?:Ref<SideMenuHandlerRef>}) {
 
           {/* خود منو - بعد از backdrop slide می‌شود */}
           <motion.div
-            className="fixed top-0 bottom-0 left-0 z-50 w-4/5 max-w-sm bg-white shadow-sm "
+            className="fixed top-0 bottom-0 left-0 z-50 w-4/5 max-w-sm bg-white shadow-sm  "
             variants={menuVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
             onClick={(e) => e.stopPropagation()} // جلوگیری از بسته شدن با کلیک داخل منو
           >
-            <div className="flex flex-col h-full">
+            <div className="flex flex-col h-full gap-1 ">
               {/* هدر منو + دکمه بستن */}
-              <div className="flex items-center justify-between  px-5 py-4 bg-linear-30  from-sky-700 to-sky-500">
-                <h2 className="text-xl font-bold">منو</h2>
+              <div className="flex items-center justify-end  px-5 py-4 bg-linear-30  from-sky-700 to-sky-600">
+               
                
                <svg xmlns="http://www.w3.org/2000/svg"  width="20mm" height="20mm" version="1.1" viewBox="0 0 2000 2000"
                     className=' size-7  cursor-pointer
@@ -166,10 +166,22 @@ export default function SideMenu({ref }: {ref?:Ref<SideMenuHandlerRef>}) {
 
                 </Link>
                 </div>
-                <div className='flex flex-col w-[90%] mx-auto gap-2 p-2'>
-                <Link href='/slides' onClick={()=>setIsOpen(false)}>مدیریت اسلاید ها </Link>
-                <Link href='/storeActivation' onClick={()=>setIsOpen(false)} >فعال سازی فروشگاه</Link>
+
+                <div className='flex flex-col w-full mx-auto gap-3 px-3 py-2  bg-gray-200'>
+                <Link className='text-xs hover:text-orange-600' href='/slides' onClick={()=>setIsOpen(false)}>مدیریت اسلاید ها </Link>
+                
                 </div>
+
+                <div className='flex flex-col w-full mx-auto gap-3 px-3 py-2  bg-gray-200'>
+                <Link className='text-xs hover:text-orange-600' href='/storeProfile' onClick={()=>setIsOpen(false)}>مدیریت فروشگاه </Link>
+                <Link className='text-xs hover:text-orange-600' href='/storeActivation' onClick={()=>setIsOpen(false)} >فعال سازی فروشگاه</Link>
+                </div>
+
+                <div className='flex flex-col w-full mx-auto gap-3 px-3 py-2  bg-gray-200'>
+                <Link className='text-xs hover:text-orange-600' href='/newsAgencyProfile' onClick={()=>setIsOpen(false)}>مدیریت خبرنامه </Link>
+                <Link className='text-xs hover:text-orange-600' href='/newsAgencyActivation' onClick={()=>setIsOpen(false)} >فعال سازی خبرنامه</Link>
+                </div>
+
             </div>
           </motion.div>
         </>
