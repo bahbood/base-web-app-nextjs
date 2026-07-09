@@ -42,8 +42,8 @@ export default function AuthenticationCMP({className ,}:{className:string , }){
             
        </div>  
 
-       <div className="w-2 h-9 bg-white/20 mx-1"  onClick={()=>RegisterPage_toggleShow()}></div>
-       <div className="w-2 h-9 bg-white/20 "  onClick={()=>ProfilePage_toggleShow()}></div>
+       {/* <div className="w-2 h-9 bg-white/20 mx-1"  onClick={()=>RegisterPage_toggleShow()}></div>
+       <div className="w-2 h-9 bg-white/20 "  onClick={()=>ProfilePage_toggleShow()}></div> */}
        </>
     )
 }
