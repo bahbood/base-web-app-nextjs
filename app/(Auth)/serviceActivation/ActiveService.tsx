@@ -1,6 +1,6 @@
 // app/(Auth)/components/ActiveService.tsx
 
-import { CaptchaHandler } from "@/app/components/(captchCMP)/CaptchaCMP"
+import { CaptchaHandler } from "@/app/components/(captcha)/Captcha_CMP"
 import FlyoutLayout from "@/app/components/(Flyouts)/FlyoutLayout"
 import { Ref, useActionState, useCallback, useRef, useState } from "react"
 import { ActiveServiceAction, ActiveServiceState } from "./ActiveServiceAction"

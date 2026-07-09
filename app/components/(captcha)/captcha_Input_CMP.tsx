@@ -1,42 +1,48 @@
-// app/components/(captchCMP)/captchaInput.tsx
+// app/components/(captcha)/captcha_Input_CMP.tsx
 "use client"
 
-import { useState, useRef, useEffect, KeyboardEvent, ClipboardEvent, } from 'react';
+import { useState, useRef, useEffect, KeyboardEvent, ClipboardEvent, useImperativeHandle, Ref } from 'react';
 
-
-
-interface OtpInputProps {
-  name:string;
-  value:string;
-  length?: number; // تعداد فیلدها، پیش‌فرض 5
-  onComplete?: (code: string) => void; // وقتی همه فیلدها پر شد
-  onChange?: (code: string) => void; // هر بار تغییر
-  className?: string;
-  disabled?: boolean;
-  isExpired?: boolean
-  autoFocus?: boolean;
-
+export interface InputCMPHandler {
+  clear: () => void;
 }
 
-/// component 
-export default function Captcha_InputCMP({ 
-  
-  length = 5, 
-  onComplete, 
-  onChange, 
-  className = '', 
-  disabled = false, 
-  autoFocus = true, 
+interface OtpInputProps {
+  name: string;
+  length?: number;
+  onComplete?: (code: string) => void;
+  onChange?: (code: string) => void;
+  className?: string;
+  disabled?: boolean;
+  isExpired?: boolean;
+  autoFocus?: boolean;
+  ref?: Ref<InputCMPHandler>
+}
+
+export default function Captcha_InputCMP({
+  name,
+  length = 5,
+  onComplete,
+  onChange,
+  className = '',
+  disabled = false,
+  autoFocus = true,
   isExpired = false,
- 
+  ref
 }: OtpInputProps) {
-
-
 
   const isDisabled = disabled || isExpired
   const [otp, setOtp] = useState<string[]>(Array(length).fill(''));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const prevIsExpired = useRef(isExpired); // برای تشخیص تغییر وضعیت انقضا
+  const prevIsExpired = useRef(isExpired);
+
+  useImperativeHandle(ref, () => ({
+    clear: () => {
+      const emptyOtp = Array(length).fill('');
+      setOtp(emptyOtp);
+      onChange?.('');
+    }
+  }), [length, onChange])
 
   // تنظیم focus روی اولین فیلد
   useEffect(() => {
@@ -155,6 +161,7 @@ export default function Captcha_InputCMP({
 
   return (
     <div className={`${className}`}>
+      <input type="hidden" name={name} value={otp.join('')} />
       <div dir='ltr' className={`flex w-full gap-3 justify-center`}>
         {otp.map((digit, index) => (
         

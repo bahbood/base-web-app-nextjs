@@ -1,75 +1,49 @@
+// app/(Auth)/components/LogIn.tsx
 'use client'
 
-import { useActionState, useState, useCallback, useEffect, useRef,  useImperativeHandle, Ref } from "react"
+import { useActionState, useState, useEffect, useRef, useImperativeHandle, Ref } from "react"
 import { loginAction, LoginState } from "./action/loginAction"
-import Captcha_CMP, { CaptchaHandler } from "@/app/components/(captchCMP)/CaptchaCMP"
 import { useRouter } from "next/navigation"
 import FlyoutLayout from "@/app/components/(Flyouts)/FlyoutLayout"
-import { flyoutPageEnum, useFlyoutPage, } from "@/app/components/(Flyouts)/(Provider)/FlyoutPageContextProvider"
-import CaptchaCMP from "@/app/components/(captcha)/Captcha_CMP"
+import { flyoutPageEnum, useFlyoutPage } from "@/app/components/(Flyouts)/(Provider)/FlyoutPageContextProvider"
+import CaptchaCMP, { CaptchaHandler } from "@/app/components/(captcha)/Captcha_CMP"
 import Captcha_InputCMP from "@/app/components/(captcha)/captcha_Input_CMP"
-// import { AuthPageEnum } from "@/app/components/(Flyouts)/(Provider)/FlyoutPageContextProvider"
-// import { AuthContext } from "@/app/components/(Flyouts)/AuthLayoutCMP"
 
-export interface LoginHandlerRef{
-  openMe:()=>void,
-  closeMe:()=>void,
-  ToggleShow:()=>void
+export interface LoginHandlerRef {
+  openMe: () => void,
+  closeMe: () => void,
+  ToggleShow: () => void
 }
 
+export default function LogIn({ ref }: { ref?: Ref<LoginHandlerRef> }) {
 
-export default function LogIn( {ref }: {ref?:Ref<LoginHandlerRef>} ) {
+  const { CloseMe_and_Open } = useFlyoutPage()
+  const { setUser } = useFlyoutPage()
+  const [isOpen, setIsOpen] = useState(false)
 
-    const {CloseMe_and_Open } = useFlyoutPage()
-//   const parentMethod=useContext(AuthContext )
-  const { setUser,  } = useFlyoutPage()
-    const[isOpen , setIsOpen]=useState(false)
-  
-    useImperativeHandle(ref , ()=>({
-      openMe :()=>{setIsOpen(true)},
-      closeMe :()=>{setIsOpen(false)},
-      ToggleShow:()=>{ setIsOpen(!isOpen) }
-    }))
-  
-  const [captchaId, setCaptchaId] = useState("")
-  const [userCaptchaInput, setUserCaptchaInput] = useState("")
-   const handleCapchCMP_methodes=useRef<CaptchaHandler>(null)
+  useImperativeHandle(ref, () => ({
+    openMe: () => { setIsOpen(true) },
+    closeMe: () => { setIsOpen(false) },
+    ToggleShow: () => { setIsOpen(!isOpen) }
+  }))
 
-  
-  const [state, formAction, isPending] = useActionState<LoginState, FormData>( loginAction, null )
+  const captchaRef = useRef<CaptchaHandler>(null)
+  const [state, formAction, isPending] = useActionState<LoginState, FormData>(loginAction, null)
 
-  const handleCaptchaIdChange = useCallback((id: string) => {
-    setCaptchaId(id)
-  }, [])
-
-  const handleUserCaptchaInput = useCallback((input: string) => {
-    setUserCaptchaInput(input)
-  }, [])
-
-  
   const router = useRouter()
-    useEffect(() => {
-       if (state?.success === true && state.user) {
-      // ✅ ساخت آبجکت کاربر از اطلاعات لاگین
-      
-       // ✅ ذخیره اطلاعات کاربر در Context
+  useEffect(() => {
+    if (state?.success === true && state.user) {
       setUser(state.user)
-    
-      // رفرش صفحه برای به‌روزرسانی کامپوننت‌ها
       router.refresh()
-      
-      // بستن پنجره لاگین
       setIsOpen(false)
-        }
+    }
+  }, [state, router, setUser])
 
-    }, [state, router ,setUser])
-
-     useEffect(() => {
-       if ( state?.success === false && state?.errors?.userCaptcha) {
-            handleCapchCMP_methodes.current?.clear()
-        }
-
-    }, [state])
+  useEffect(() => {
+    if (state?.success === false && state?.errors?.userCaptcha) {
+      captchaRef.current?.clear()
+    }
+  }, [state])
 
   const closeMe=()=>{
     
@@ -116,30 +90,18 @@ export default function LogIn( {ref }: {ref?:Ref<LoginHandlerRef>} ) {
                               />
                           </div>
                           {/* captcha ---------- */}
-                          <div className="flex flex-col w-[95%] sm:w-[85%] gap-1 mt-2 ">
-                              <div className="flex w-full ">
+                          <div className="flex flex-col w-[95%] sm:w-[85%] gap-1 mt-2">
+                              <div className="flex w-full">
                                   <label className="text-right text-[10px] pr-2">کد امنیتی :</label>
                                   {state?.errors?.userCaptcha && (
-                                    
-                                      <label className="text-right text-[10px] pr-2 text-red-600"> {state?.errors?.userCaptcha}</label>
+                                      <label className="text-right text-[10px] pr-2 text-red-600">{state?.errors?.userCaptcha}</label>
                                   )}
-                                  
                               </div>
 
-                              {/* <input type="hidden" name="captchaId" value={captchaId} />
-                              <input type="hidden" name="userCaptchaInput" value={userCaptchaInput} />
-                              <Captcha_CMP
-                                  className="w-full flex gap-1"
-                                  ref={handleCapchCMP_methodes}
-                                  onCaptchaIdChange={handleCaptchaIdChange}
-                                  onCaptchaUserInputChange={handleUserCaptchaInput}
-                              /> */}
-                              <div className="flex flex-col w-full gap-2  p-2 border border-dashed border-gray-500/50 rounded-md">
-                                  <CaptchaCMP className="w-full flex" name="captchaId" vlaue="" />
-                                  <Captcha_InputCMP name="userCaptchaInput" value="" />
+                              <div className="flex flex-col w-full gap-2">
+                                  <CaptchaCMP className="w-full flex" name="captchaId" ref={captchaRef} />
+                                  <Captcha_InputCMP name="userCaptchaInput" />
                               </div>
-
-
 
                           </div>
                                    

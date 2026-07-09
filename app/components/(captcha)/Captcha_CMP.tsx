@@ -1,8 +1,8 @@
-// app/components/(captchCMP)/CaptchaCMP.tsx
+// app/components/(captcha)/Captcha_CMP.tsx
 "use client"
 
 import { createCaptchaImageAction } from "@/app/components/(captcha)/action/createCaptchaImageAction"
-import { useEffect, useState, useRef, useCallback, Ref,} from "react"
+import { useEffect, useState, useRef, useCallback, useImperativeHandle, Ref } from "react"
 
 interface CaptchaData {
   captchaId: string
@@ -11,25 +11,21 @@ interface CaptchaData {
 
 export interface CaptchaHandler {
   clear: () => void;
-  }
+}
 
-export default function CaptchaCMP({ className, name , vlaue , onCaptchaUserInputChange,onCaptchaIdChange, ref}: { 
-  className: string
-  name:string
-  vlaue:string
-  onCaptchaUserInputChange?: (userInputText: string) => void 
+export default function CaptchaCMP({ className, name, onCaptchaIdChange, ref }: {
+  className?: string
+  name: string
   onCaptchaIdChange?: (captchaId: string) => void
-  ref?:Ref<CaptchaHandler>
+  ref?: Ref<CaptchaHandler>
 }) {
   const [captchaData, setCaptchaData] = useState<CaptchaData>({ captchaId: '', image: '' })
-  const [userInputText, setUserInputText] = useState("")
   const [timeLeft, setTimeLeft] = useState(0)
   const [isExpired, setIsExpired] = useState(false)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [hasCaptcha, setHasCaptcha] = useState(false)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
-  // توقف تایمر
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
       clearInterval(timerRef.current)
@@ -37,13 +33,17 @@ export default function CaptchaCMP({ className, name , vlaue , onCaptchaUserInpu
     }
   }, [])
 
- 
- 
+  useImperativeHandle(ref, () => ({
+    clear: () => {
+      stopTimer()
+      setTimeLeft(0)
+      setIsExpired(true)
+      setCaptchaData({ captchaId: '', image: '' })
+    }
+  }), [stopTimer])
 
-  // شروع تایمر
   const startTimer = useCallback(() => {
     stopTimer()
-    
     timerRef.current = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
@@ -56,16 +56,10 @@ export default function CaptchaCMP({ className, name , vlaue , onCaptchaUserInpu
     }, 1000)
   }, [stopTimer])
 
-  // دریافت کپچا
   const refreshCaptcha = useCallback(async () => {
-
     if (isRefreshing) return
     setIsRefreshing(true)
     stopTimer()
-    // ********** پاک کردن ورودی کاربر **********
-    setUserInputText("")
-    onCaptchaUserInputChange?.("")
-    
 
     try {
       const newCaptcha = await createCaptchaImageAction()
@@ -73,53 +67,34 @@ export default function CaptchaCMP({ className, name , vlaue , onCaptchaUserInpu
       setTimeLeft(60)
       setIsExpired(false)
       setHasCaptcha(true)
-
-      // ارسال captchaId به والد
-      //
       onCaptchaIdChange?.(newCaptcha.captchaId)
-
       startTimer()
     } catch (error) {
       console.error("Error refreshing captcha:", error)
     } finally {
-
       setIsRefreshing(false)
-
     }
-  }, [isRefreshing, onCaptchaUserInputChange, onCaptchaIdChange, stopTimer, startTimer])
+  }, [isRefreshing, onCaptchaIdChange, stopTimer, startTimer])
 
-  // هندل کلیک روی دکمه رفرش
   const handleRefresh = () => {
-   
     refreshCaptcha()
   }
 
-  // پاکسازی تایمر هنگام unmount
   useEffect(() => {
     return () => {
       stopTimer()
     }
   }, [stopTimer])
 
-  // ********** بارگذاری خودکار کپچا **********
   useEffect(() => {
     refreshCaptcha()
   }, [])
-
-  function completeUserCodeInput(code: string): void {
-    setUserInputText(code)
-     // ارسال به والد
-    onCaptchaUserInputChange?.(code)
-  }
-  function handleUserInputChange(code: string): void {
-  setUserInputText(code)
-  onCaptchaUserInputChange?.(code)
-}
 
   
 
   return (
     <div className={`${className}`}>
+      <input type="hidden" name={name} value={captchaData.captchaId} />
       <div className="flex flex-col w-full h-full items-center gap-1 ">
         <div dir="ltr" className="flex w-full justify-between rounded-sm">
           <button 

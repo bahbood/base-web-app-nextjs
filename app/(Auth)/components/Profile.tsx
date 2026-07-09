@@ -2,12 +2,13 @@
 
 'use client'
 
-import { useActionState, useState, useCallback, useEffect, useRef,  useImperativeHandle, Ref } from "react"
-import Captcha_CMP, { CaptchaHandler } from "@/app/components/(captchCMP)/CaptchaCMP"
+import { useActionState, useState, useEffect, useRef,  useImperativeHandle, Ref } from "react"
 import { useRouter } from "next/navigation"
 import FlyoutLayout from "@/app/components/(Flyouts)/FlyoutLayout"
-import { useFlyoutPage, logined_User_Info } from "@/app/components/(Flyouts)/(Provider)/FlyoutPageContextProvider"
+import { useFlyoutPage } from "@/app/components/(Flyouts)/(Provider)/FlyoutPageContextProvider"
 import { ProfileAction, ProfileState } from "./action/profileAction"
+import CaptchaCMP, { CaptchaHandler } from "@/app/components/(captcha)/Captcha_CMP"
+import Captcha_InputCMP from "@/app/components/(captcha)/captcha_Input_CMP"
 
 export interface ProfileHandlerRef{
   openMe:()=>void,
@@ -17,7 +18,6 @@ export interface ProfileHandlerRef{
 
 
 export default function Profile( {ref }: {ref?:Ref<ProfileHandlerRef>} ) {
-//   const parentMethod=useContext(AuthContext )
   const { setUser, user } = useFlyoutPage()
     const[isOpen , setIsOpen]=useState(false)
   
@@ -27,20 +27,10 @@ export default function Profile( {ref }: {ref?:Ref<ProfileHandlerRef>} ) {
       ToggleShow:()=>{ setIsOpen(!isOpen) }
     }))
   
-  const [captchaId, setCaptchaId] = useState("")
-  const [userCaptchaInput, setUserCaptchaInput] = useState("")
-   const handleCapchCMP_methodes=useRef<CaptchaHandler>(null)
+   const captchaRef = useRef<CaptchaHandler>(null)
 
   
   const [state, formAction, isPending] = useActionState<ProfileState, FormData>( ProfileAction, null )
-
-  const handleCaptchaIdChange = useCallback((id: string) => {
-    setCaptchaId(id)
-  }, [])
-
-  const handleUserCaptchaInput = useCallback((input: string) => {
-    setUserCaptchaInput(input)
-  }, [])
 
   
   const router = useRouter()
@@ -55,7 +45,7 @@ export default function Profile( {ref }: {ref?:Ref<ProfileHandlerRef>} ) {
 
      useEffect(() => {
        if ( state?.success === false && state?.errors?.userCaptcha) {
-            handleCapchCMP_methodes.current?.clear()
+            captchaRef.current?.clear()
         }
 
     }, [state])
@@ -149,25 +139,20 @@ export default function Profile( {ref }: {ref?:Ref<ProfileHandlerRef>} ) {
 
                            
                          
-                          {/* captcha ---------- */}
+                        {/* captcha ---------- */}
                           <div className="flex flex-col w-[95%] sm:w-[85%] gap-1 mt-2">
-                              <div className="flex w-full ">
+                              <div className="flex w-full">
                                   <label className="text-right text-[10px] pr-2">کد امنیتی :</label>
                                   {state?.errors?.userCaptcha && (
-                                    
-                                      <label className="text-right text-[10px] pr-2 text-red-600"> {state?.errors?.userCaptcha}</label>
+                                      <label className="text-right text-[10px] pr-2 text-red-600">{state?.errors?.userCaptcha}</label>
                                   )}
-                                  
                               </div>
 
-                              <input type="hidden" name="captchaId" value={captchaId} />
-                              <input type="hidden" name="userCaptchaInput" value={userCaptchaInput} />
-                              <Captcha_CMP
-                                  className="w-full flex gap-1"
-                                  ref={handleCapchCMP_methodes}
-                                  onCaptchaIdChange={handleCaptchaIdChange}
-                                  onCaptchaUserInputChange={handleUserCaptchaInput}
-                              />
+                              <div className="flex flex-col w-full gap-2">
+                                  <CaptchaCMP className="w-full flex" name="captchaId" ref={captchaRef} />
+                                  <Captcha_InputCMP name="userCaptchaInput" />
+                              </div>
+
                           </div>
                           {/* message place ---------- */}
                           <div className="flex py-1 mt-4">

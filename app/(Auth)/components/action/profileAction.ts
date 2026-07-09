@@ -1,7 +1,7 @@
 // app/(Auth)/components/action/profileAction.ts
 'use server'
 
-import captchaValidationAction from '@/app/components/(captchCMP)/action/captchaValidationAction'
+import captchaValidationAction from '@/app/components/(captcha)/action/captchaValidationAction'
 import { db } from '@/app/db'
 import { eq } from 'drizzle-orm'
 import { users } from '@/app/db/schema'

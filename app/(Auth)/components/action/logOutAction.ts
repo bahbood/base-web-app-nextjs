@@ -5,8 +5,7 @@
 import { revalidatePath } from 'next/cache'
 import { deleteSession } from '../../lib/session'
 import { logined_User_Info } from '@/app/components/(Flyouts)/(Provider)/FlyoutPageContextProvider'
-import captchaValidationAction from '@/app/components/(captchCMP)/action/captchaValidationAction'
-
+import captchaValidationAction from '@/app/components/(captcha)/action/captchaValidationAction'
 export type LogOutState = {
   success: boolean
   user?: logined_User_Info | null
