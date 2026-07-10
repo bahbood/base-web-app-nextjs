@@ -1,4 +1,5 @@
 // app/(Auth)/components/Register.tsx
+'use client'
 
 import FlyoutLayout from "@/app/components/(Flyouts)/FlyoutLayout";
 import { Ref, useActionState, useEffect, useImperativeHandle, useRef, useState } from "react";
@@ -14,8 +15,7 @@ export interface RegisterHandlerRef{
 }
 
 export default function Register({ref }: {ref?:Ref<RegisterHandlerRef>}){
-    const {CloseMe_and_Open } = useFlyoutPage()
-    const { setUser } = useFlyoutPage()
+    const { CloseMe_and_Open, messageBox_show } = useFlyoutPage()
         const[isOpen , setIsOpen]=useState(false)
       
         useImperativeHandle(ref , ()=>({
@@ -37,6 +37,19 @@ export default function Register({ref }: {ref?:Ref<RegisterHandlerRef>}){
   useEffect(() => {
     if (state?.success === false && state?.errors?.userCaptcha) {
       captchaRef.current?.clear()
+    }
+  }, [state])
+
+  const messageBoxShowRef = useRef(messageBox_show)
+  useEffect(() => {
+    messageBoxShowRef.current = messageBox_show
+  })
+
+  useEffect(() => {
+    if (state?.success === true) {
+      messageBoxShowRef.current("ثبت نام", "ثبت نام با موفقیت انجام شد. لطفا وارد شوید.", "success")
+    } else if (state?.success === false && state?.errors?.message) {
+      messageBoxShowRef.current("خطا", state.errors.message, "error")
     }
   }, [state])
 
@@ -92,14 +105,6 @@ export default function Register({ref }: {ref?:Ref<RegisterHandlerRef>}){
                               </div>
 
                           </div>
-                                  {/* message place ---------- */}
-                                  <div className="flex py-1 mt-4">
-                                      {state?.errors?.message && (
-                                          <pre className="w-full text-red-700 text-[10px] text-right">
-                                              {state.errors?.message}
-                                          </pre>
-                                      )}
-                                  </div>
                                   {/* submit button ---------- */}
                                   <div className="flex w-[95%] sm:w-[85%] gap-2 mt-1 text-sm">
                                       <button
@@ -124,7 +129,6 @@ export default function Register({ref }: {ref?:Ref<RegisterHandlerRef>}){
                                           </button>
                                       </p>
                                   </div>
-        
         
                               </form>
                           </div>

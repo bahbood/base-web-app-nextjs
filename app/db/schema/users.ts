@@ -18,7 +18,7 @@ export const users = pgTable('users', {
    
    email:varchar('email',{length:40}),
    email_isvalid:boolean("email_isvalid").default(false),
-   mobile_number:varchar('mobile_number',{length:11}).notNull().unique(),
+   mobile_number:varchar('mobile_number',{length:11}).unique(),
    mobile_number_isvalid:boolean("mobile_number_isvalid").default(false),
 
    name:varchar('name',{ length:20}),

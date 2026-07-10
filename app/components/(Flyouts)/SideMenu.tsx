@@ -169,6 +169,8 @@ export default function SideMenu({ref }: {ref?:Ref<SideMenuHandlerRef>}) {
 
                 <div className='flex flex-col w-full mx-auto gap-3 px-3 py-2  bg-gray-200'>
                 <Link className='text-xs hover:text-orange-600' href='/slides' onClick={()=>setIsOpen(false)}>مدیریت اسلاید ها </Link>
+                <Link className='text-xs hover:text-orange-600' href='/users' onClick={()=>setIsOpen(false)}>لیست یوزر  ها </Link>
+                <Link className='text-xs hover:text-orange-600' href='/users/passToHash' onClick={()=>setIsOpen(false)}>  تبدیل تکست به هش </Link>
                 
                 </div>
 

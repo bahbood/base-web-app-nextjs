@@ -4,7 +4,7 @@ import { decryptSession, encryptSession,  updateSession } from '@/app/(Auth)/lib
 import { cookies } from 'next/headers'
 
 // 1. Specify protected and public routes
-const protectedRoutes = ['/store', '/storeProfile', '/storeActivation', '/productsList']
+const protectedRoutes = ['/store', '/storeProfile', '/storeActivation', '/productsList','/users']
 const publicRoutes = ['/',]
 
 const AdminPathes = ["/newsAgenciesList"]

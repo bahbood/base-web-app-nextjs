@@ -37,7 +37,7 @@ export type RegisterState = {
  
    
    // 2. اعتبارسنجی اولیه
- 
+
    const userName_validation: boolean =  /^[a-zA-Z0-9@#$%^&]{1,20}$/.test(userName)
    const password_validation: boolean =  /^[a-zA-Z0-9@#$%^&]{6,20}$/.test(password)
    const userCaptchaInput_validation: boolean =/^[ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789]{5}$/.test(userCaptchaInput)
@@ -76,41 +76,44 @@ export type RegisterState = {
       }
    }
  
-  // 4 . بررسی اینکه نام وارد شده برای یوزر یکتا باشد و ذخیره در دیتابیس
- 
- 
+  // 4. بررسی تکراری نبودن نام کاربری و ذخیره در دیتابیس
+
+
    try {
-     // 5. 
-     // جستجوی کاربر در دیتابیس
-     const user = await db
+     // 5. جستجوی کاربر در دیتابیس
+     const existingUser = await db
        .select()
        .from(users)
        .where(eq(users.user_name, userName))
        .limit(1);
  
-     if (user.length === 0) {
+     if (existingUser.length > 0) {
        return {
          success: false,
-         errors: { message: '  !!! نام کاربری یا گذرواژه  اشتباه است  ' },
+         errors: { message: 'نام کاربری تکراری است' },
          values:{ 
          userName:userName,
         }
        };
      }
  
-       const foundUser = user[0]
-    
+     // 6. هش کردن رمز عبور
+     const hashedPassword = await bcrypt.hash(password, 10);
  
+     // 7. درج کاربر جدید در دیتابیس
+     await db.insert(users).values({
+       user_name: userName,
+       password: hashedPassword,
+       role: 'user',
+       is_active: true,
+     });
  
      return {
          success: true,
-         
        };
  
-    
-     
    } catch (error) {
-     console.error('Login error:', error)
+     console.error('Register error:', error)
      return {
          success: false,
          errors:{
@@ -124,4 +127,3 @@ export type RegisterState = {
  
  
  }
- 
