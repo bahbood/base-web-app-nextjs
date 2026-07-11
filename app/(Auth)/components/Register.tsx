@@ -75,6 +75,7 @@ export default function Register({ref }: {ref?:Ref<RegisterHandlerRef>}){
                                       <input id="userName" name="userName" type="text" placeholder="UserName" dir="ltr"
                                           required autoFocus defaultValue={state?.values?.userName || ""}
                                           className="block w-full rounded-md px-3 pt-3 pb-2 text-xs outline-1 outline-gray-300"
+                                          pattern="^[a-zA-Z0-9_]{5,50}$"
                                       />
                                   </div>
                                   {/* passWord ------------ */}
@@ -88,8 +89,26 @@ export default function Register({ref }: {ref?:Ref<RegisterHandlerRef>}){
                                       <input id="password" name="password" type="password" autoComplete="current-password" placeholder="PassWord" dir="ltr"
                                           required
                                           className="block w-full rounded-md px-3 pt-3 pb-2 text-xs outline-1 outline-gray-300"
+                                          pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&])[a-zA-Z0-9@#$%^&]{5,}$/"
+                                        //   پترن پسورود حداقل 5 حرف حتما 	حداقل شامل  1 حرف کوچک -- حداقل 1 حرف بزرگ و  حداقل یک نشانه از @#$%^& باشد
                                       />
                                   </div>
+
+                                   {/* mobile number ----------- */}
+                                  <div className="flex flex-col w-[95%] sm:w-[85%] gap-1">
+                                      <div className="flex w-full ">
+                                          <label className="text-right text-[10px] pr-2">  شماره موبایل : 09100000000 </label>
+                                          {state?.errors?.userName && (
+                                              <label className="text-right text-[10px] pr-2 text-red-600">{state?.errors?.userName}</label>
+                                          )}
+                                      </div>
+                                      <input id="mobile_number" name="mobile_number" type="text" placeholder="mobile_number" dir="ltr"
+                                          required  defaultValue={state?.values?.userName || ""}
+                                          className="block w-full rounded-md px-3 pt-3 pb-2 text-xs outline-1 outline-gray-300"
+                                          pattern="/^09[0-9]{9}$/"
+                                      />
+                                  </div>
+
                                  {/* captcha ---------- */}
                           <div className="flex flex-col w-[95%] sm:w-[85%] gap-1 mt-2">
                               <div className="flex w-full">

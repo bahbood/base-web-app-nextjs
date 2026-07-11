@@ -130,6 +130,13 @@ const messageBox_close = () => {
    },1000)
   }
 
+  const headerColor = {
+    info: "bg-sky-600",
+    success: "bg-green-600",
+    warning: "bg-yellow-500",
+    error: "bg-red-600"
+    }[messageBox.type ?? "info"]
+
   return (
     <FlyoutPageContext.Provider 
             value={
@@ -159,13 +166,34 @@ messageBox_close
              
             }>
        <RegisterSW/>
+
+       {/* popup message box on top off all *************** */}
+          {messageBox.show && (
+                        
+                        <div className="fixed flex w-full h-dvh justify-center items-center z-60 bg-white/40 backdrop-blur-lg">
+                            <div className="flex flex-col landscape:w-sm portrait:w-[90%] min-h-40 bg bg-white border border-gray-500 rounded-sm ">
+                                <span className={`${headerColor} text-white p-3`} > {messageBox.caption} </span>
+                                <div className="flex flex-col items-center w-full flex-1 bg-gray-100 px-3 py-2">
+
+                                  <p className="block w-full text-justify indent-1 text-xs">
+                                    {messageBox.message}
+                                  </p>
+                                  <button onClick={messageBox_close}  
+                                  className="w-[85%]  py-3 bg-lime-500 text-white text-center text-md rounded-sm my-3 cursor-pointer"> متوجه شدم </button>
+
+                                </div>
+                            </div>
+                        </div>
+        )}   
+        {/* popup message box end *************** */}
+
         {/* فرم ها و برگ های پرنده       */}
        <SideMenu ref={SideMenuHandler}/>
        <LogIn  ref={LogInHandler} />
        <LogOut ref={LogOutHandler} />
        <Profile ref={ProfileHandler} />
        <Register  ref={RegisterHandler} />
-
+          
 
 
       {children}
