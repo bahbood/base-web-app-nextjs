@@ -35,7 +35,7 @@ export default function Register({ref }: {ref?:Ref<RegisterHandlerRef>}){
   const [state, formAction, isPending] = useActionState<RegisterState, FormData>( RegisterAction, null )
 
   useEffect(() => {
-    if (state?.success === false && state?.errors?.userCaptcha) {
+    if (state?.success === false && state?.fieldsState?.userCaptcha_isCorrect===false) {
       captchaRef.current?.clear()
     }
   }, [state])
@@ -47,9 +47,22 @@ export default function Register({ref }: {ref?:Ref<RegisterHandlerRef>}){
 
   useEffect(() => {
     if (state?.success === true) {
-      messageBoxShowRef.current("ثبت نام", "ثبت نام با موفقیت انجام شد. لطفا وارد شوید.", "success")
-    } else if (state?.success === false && state?.errors?.message) {
-      messageBoxShowRef.current("خطا", state.errors.message, "error")
+      messageBoxShowRef.current("ثبت نام", 
+        [
+            "ثبت نام با موفقیت انجام شد.   اکنون میتوانید وارد حساب کاربری خود شوید.",
+            " توجه داشته باشید برای استفاده از امکانات سایت میبایست نسبت به تکمیل پروفایل کاربری خود اقدام نمایید ."
+        ],
+         "success")
+
+    } else if (state?.success === false ) {
+        let errorMessage =[];
+        state.fieldsState?.userName_isCorrect===false && ( errorMessage.push("نام کاربری : باید حداقل داری 5 کاراکتر  شامل حروف لاتین ، اعداد ، زیر خط و علامت های @#$%^& باشد"))
+        state.fieldsState?.passWord_isCorrect===false && ( errorMessage.push("گذرواژه : باید شامل حداقل 5 حرف و حداقل شامل یک حرف کوچک -- حداقل یک حرف بزرگ و  حداقل یک نشانه از  @ # $ % ^ &  باشد "))
+        state.fieldsState?.mobile_number_isCorrect===false && ( errorMessage.push("شماره موبایل : باید شامل 11 عدد باشد و با 09 شروع شود"))
+        state.fieldsState?.userCaptcha_isCorrect===false && ( errorMessage.push("کد امنیتی به درستی وارد نشده"))
+        state.fieldsState?.connection_isCorrect===false && ( errorMessage.push("خطا در ارتباط با سرور - دوباره سعی نمایید"))
+        state.fieldsState?.userName_alreadyExist && ( errorMessage.push("نام کاربری : نام کاربری انتخاب شده قبلا استفاده شده است !!! "))
+      messageBoxShowRef.current("خطا", errorMessage, "error")
     }
   }, [state])
 
@@ -66,55 +79,56 @@ export default function Register({ref }: {ref?:Ref<RegisterHandlerRef>}){
                                 <form action={formAction} className="flex flex-col   items-center landscape:w-xs portrait:w-full text-slate-800 gap-2">
                                   {/* userName ----------- */}
                                   <div className="flex flex-col w-[95%] sm:w-[85%] gap-1">
-                                      <div className="flex w-full ">
-                                          <label className="text-right text-[10px] pr-2">نام کاربری :</label>
-                                          {state?.errors?.userName && (
-                                              <label className="text-right text-[10px] pr-2 text-red-600">{state?.errors?.userName}</label>
+                                      <div className="flex w-full items-center gap-1">
+                                          <label className="text-right text-[10px] pr-2"> نام کاربری:</label>
+                                          { state?.fieldsState?.userName_isCorrect == false && (
+                                              <div className=" h-2 w-2  bg-red-600 rounded-full"></div>
                                           )}
                                       </div>
                                       <input id="userName" name="userName" type="text" placeholder="UserName" dir="ltr"
                                           required autoFocus defaultValue={state?.values?.userName || ""}
                                           className="block w-full rounded-md px-3 pt-3 pb-2 text-xs outline-1 outline-gray-300"
-                                          pattern="^[a-zA-Z0-9_]{5,50}$"
+                                          pattern="^[a-zA-Z0-9_@#$%^&]{5,50}$" 
+                                          // حروف لاتین کوچک و بزرگ و اعداد و زیرخط و @#$%^& --- حداقل 5 و حداکثر 50 کاراکتر   --  نام کاربری
                                       />
                                   </div>
                                   {/* passWord ------------ */}
                                   <div className="flex flex-col w-[95%] sm:w-[85%] gap-1">
-                                      <div className="flex w-full ">
+                                      <div className="flex w-full items-center gap-1 ">
                                           <label className="text-right text-[10px] pr-2">گذر واژه :</label>
-                                          {state?.errors?.passWord && (
-                                              <label className="text-right text-[10px] pr-2 text-red-600">{state?.errors?.passWord}</label>
+                                          {state?.fieldsState?.passWord_isCorrect == false &&(
+                                             <div className=" h-2 w-2  bg-red-600 rounded-full"></div>
                                           )}
                                       </div>
                                       <input id="password" name="password" type="password" autoComplete="current-password" placeholder="PassWord" dir="ltr"
                                           required
                                           className="block w-full rounded-md px-3 pt-3 pb-2 text-xs outline-1 outline-gray-300"
-                                          pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&])[a-zA-Z0-9@#$%^&]{5,}$/"
-                                        //   پترن پسورود حداقل 5 حرف حتما 	حداقل شامل  1 حرف کوچک -- حداقل 1 حرف بزرگ و  حداقل یک نشانه از @#$%^& باشد
+                                          pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&])[a-zA-Z0-9@#$%^&]{5,}$"
+                                        //   پسوورد -- پترن پسورود حداقل 5 حرف حتما 	حداقل شامل  1 حرف کوچک -- حداقل 1 حرف بزرگ و  حداقل یک نشانه از @#$%^& باشد
                                       />
                                   </div>
 
                                    {/* mobile number ----------- */}
                                   <div className="flex flex-col w-[95%] sm:w-[85%] gap-1">
-                                      <div className="flex w-full ">
+                                      <div className="flex w-full items-center gap-1 ">
                                           <label className="text-right text-[10px] pr-2">  شماره موبایل : 09100000000 </label>
-                                          {state?.errors?.userName && (
-                                              <label className="text-right text-[10px] pr-2 text-red-600">{state?.errors?.userName}</label>
+                                          {state?.fieldsState?.mobile_number_isCorrect == false && (
+                                              <div className=" h-2 w-2  bg-red-600 rounded-full"></div>
                                           )}
                                       </div>
                                       <input id="mobile_number" name="mobile_number" type="text" placeholder="mobile_number" dir="ltr"
-                                          required  defaultValue={state?.values?.userName || ""}
+                                          required  defaultValue={state?.values?.mobile_number || ""}
                                           className="block w-full rounded-md px-3 pt-3 pb-2 text-xs outline-1 outline-gray-300"
-                                          pattern="/^09[0-9]{9}$/"
+                                          pattern="^09[0-9]{9}$"
                                       />
                                   </div>
 
                                  {/* captcha ---------- */}
                           <div className="flex flex-col w-[95%] sm:w-[85%] gap-1 mt-2">
-                              <div className="flex w-full">
+                              <div className="flex w-full items-center gap-1">
                                   <label className="text-right text-[10px] pr-2">کد امنیتی :</label>
-                                  {state?.errors?.userCaptcha && (
-                                      <label className="text-right text-[10px] pr-2 text-red-600">{state?.errors?.userCaptcha}</label>
+                                  {state?.fieldsState?.userCaptcha_isCorrect == false && (
+                                      <div className=" h-2 w-2  bg-red-600 rounded-full"></div>
                                   )}
                               </div>
 

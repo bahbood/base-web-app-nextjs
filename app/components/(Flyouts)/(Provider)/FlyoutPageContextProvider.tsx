@@ -12,7 +12,7 @@ import Profile, { ProfileHandlerRef } from '@/app/(Auth)/components/Profile'
 type MessageBoxState = {
     show: boolean
     caption: string
-    message: string
+    messages: string[]
 
     type?: "info" | "success" | "warning" | "error"
 }
@@ -28,7 +28,7 @@ interface I_FlyoutPageProviderContext{
 
    messageBox_show(
     caption: string,
-    message: string,
+    messages:string[],
     type?: MessageBoxState["type"]
 ): void
 
@@ -61,7 +61,7 @@ export function FlyoutPageProvider({ children , initialUser = null }: { children
    const [messageBox, setMessageBox] = useState<MessageBoxState>({
     show: false,
     caption: "",
-    message: ""
+    messages: []
 })
 
    const SideMenuHandler= useRef<SideMenuHandlerRef>(null)
@@ -81,14 +81,14 @@ export function FlyoutPageProvider({ children , initialUser = null }: { children
 
  const messageBox_show = (
     caption: string,
-    message: string,
+    messages: string[],
     type: MessageBoxState["type"] = "info"
 ) => {
 
     setMessageBox({
         show: true,
         caption,
-        message,
+        messages,
         type
     })
 
@@ -99,7 +99,7 @@ const messageBox_close = () => {
     setMessageBox({
         show: false,
         caption: "",
-        message: "",
+        messages: [],
         type: "info"
     })
 
@@ -170,16 +170,20 @@ messageBox_close
        {/* popup message box on top off all *************** */}
           {messageBox.show && (
                         
-                        <div className="fixed flex w-full h-dvh justify-center items-center z-60 bg-white/40 backdrop-blur-lg">
-                            <div className="flex flex-col landscape:w-sm portrait:w-[90%] min-h-40 bg bg-white border border-gray-500 rounded-sm ">
+                        <div className="fixed flex w-full h-dvh justify-center items-center z-60 ">
+                            <div className="flex flex-col landscape:w-md portrait:w-[90%] max-h-[70%]  bg-white border-2 border-gray-500 rounded-sm shadow-sm shadow-gray-400 ">
                                 <span className={`${headerColor} text-white p-3`} > {messageBox.caption} </span>
-                                <div className="flex flex-col items-center w-full flex-1 bg-gray-100 px-3 py-2">
-
-                                  <p className="block w-full text-justify indent-1 text-xs">
-                                    {messageBox.message}
-                                  </p>
+                                <div className="flex flex-col items-center w-full flex-1 bg-gray-100 px-3 py-2 overflow-y-scroll">
+                                  { messageBox.messages &&
+                                    messageBox.messages.map( (message , index)  =>
+                                      <p  key={index} className="block w-full text-justify indent-1 text-xs py-1">
+                                          { message }
+                                      </p>
+                                    )
+                                  }
+                                  
                                   <button onClick={messageBox_close}  
-                                  className="w-[85%]  py-3 bg-lime-500 text-white text-center text-md rounded-sm my-3 cursor-pointer"> متوجه شدم </button>
+                                  className="w-[85%]  py-3 bg-lime-500 text-white text-center text-md rounded-sm my-4 cursor-pointer"> متوجه شدم </button>
 
                                 </div>
                             </div>
