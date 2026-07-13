@@ -8,6 +8,7 @@ import FlyoutLayout from "@/app/components/(Flyouts)/FlyoutLayout"
 import { flyoutPageEnum, useFlyoutPage } from "@/app/components/(Flyouts)/(Provider)/FlyoutPageContextProvider"
 import CaptchaCMP, { CaptchaHandler } from "@/app/components/(captcha)/Captcha_CMP"
 import Captcha_InputCMP from "@/app/components/(captcha)/captcha_Input_CMP"
+import SplitInput from "@/app/components/(captcha)/Split_InputCMP"
 
 export interface LoginHandlerRef {
   openMe: () => void,
@@ -100,7 +101,8 @@ export default function LogIn({ ref }: { ref?: Ref<LoginHandlerRef> }) {
 
                               <div className="flex flex-col w-full gap-2">
                                   <CaptchaCMP className="w-full flex" name="captchaId" ref={captchaRef} />
-                                  <Captcha_InputCMP name="userCaptchaInput" />
+                                  {/* <Captcha_InputCMP name="userCaptchaInput" /> */}
+                                  <SplitInput name="userCaptchaInput"/>
                               </div>
 
                           </div>

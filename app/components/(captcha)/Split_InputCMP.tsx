@@ -125,32 +125,41 @@ export default function SplitInput({
   //----------------------------------------------------
 
   function handleKeyDown(
-    index: number,
-    e: KeyboardEvent<HTMLInputElement>
-  ) {
-    if (isDisabled) return;
+  index: number,
+  e: KeyboardEvent<HTMLInputElement>
+) {
+  if (isDisabled) return;
 
-    if (e.key !== "Backspace") return;
+  if (e.key !== "Backspace") return;
 
-    e.preventDefault();
+  e.preventDefault();
 
-    const next = [...values];
+  const next = [...values];
 
-    if (next[index]) {
-      next[index] = "";
-      setValues(next);
-      onChange?.(next.join(""));
-      return;
-    }
+  // اگر خانه مقدار دارد
+  if (next[index]) {
+    next[index] = "";
+    setValues(next);
+    onChange?.(next.join(""));
 
     if (index > 0) {
-      next[index - 1] = "";
-      setValues(next);
-      onChange?.(next.join(""));
-      inputRefs.current[index + 1]?.focus();
-      inputRefs.current[index + 1]?.select();
+      inputRefs.current[index - 1]?.focus();
+      inputRefs.current[index - 1]?.select();
     }
+
+    return;
   }
+
+  // اگر خانه خالی است
+  if (index > 0) {
+    next[index - 1] = "";
+    setValues(next);
+    onChange?.(next.join(""));
+
+    inputRefs.current[index - 1]?.focus();
+    inputRefs.current[index - 1]?.select();
+  }
+}
 
   //----------------------------------------------------
   // Paste
