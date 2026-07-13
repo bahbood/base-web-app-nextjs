@@ -34,7 +34,7 @@ export default function SplitInput({
   className = "",
   disabled = false,
   isExpired = false,
-  autoFocus = true,
+  autoFocus = false,
   ref,
 }: SplitInputProps ) {
   const isDisabled = disabled || isExpired;

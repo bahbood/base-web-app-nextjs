@@ -18,7 +18,7 @@ export interface LoginHandlerRef {
 
 export default function LogIn({ ref }: { ref?: Ref<LoginHandlerRef> }) {
 
-  const { CloseMe_and_Open } = useFlyoutPage()
+   const { CloseMe_and_Open, messageBox_show } = useFlyoutPage()
   const { setUser } = useFlyoutPage()
   const [isOpen, setIsOpen] = useState(false)
 
@@ -40,9 +40,20 @@ export default function LogIn({ ref }: { ref?: Ref<LoginHandlerRef> }) {
     }
   }, [state, router, setUser])
 
+  const messageBoxShowRef = useRef(messageBox_show)
   useEffect(() => {
-    if (state?.success === false && state?.errors?.userCaptcha) {
-      captchaRef.current?.clear()
+    messageBoxShowRef.current = messageBox_show
+  })
+
+  useEffect(() => {
+    if (state?.success === false)  {
+        let errorMessage:string[] =[];
+        state.errors?.userName && ( errorMessage.push(state.errors?.userName))
+        state.errors?.passWord && ( errorMessage.push(state.errors?.passWord))
+        state.errors?.userCaptcha && ( errorMessage.push(state.errors?.userCaptcha))
+        state.errors?.publicError && ( errorMessage.push(state.errors?.publicError))
+     
+        messageBoxShowRef.current("خطا", errorMessage, "error")
     }
   }, [state])
 
@@ -66,55 +77,51 @@ export default function LogIn({ ref }: { ref?: Ref<LoginHandlerRef> }) {
                         <form action={formAction} className="flex flex-col   items-center landscape:w-xs portrait:w-full text-slate-800 gap-2">
                           {/* userName ----------- */}
                           <div className="flex flex-col w-[95%] sm:w-[85%] gap-1">
-                              <div className="flex w-full ">
-                                  <label className="text-right text-[10px] pr-2">نام کاربری :</label>
+                              <div className="flex w-full items-center gap-1">
+                                  <label className="text-right text-[10px] pr-2"> نام کاربری:</label>
                                   {state?.errors?.userName && (
-                                      <label className="text-right text-[10px] pr-2 text-red-600">{state?.errors?.userName}</label>
+                                      <div className=" h-2 w-2  bg-red-600 rounded-full"></div>
                                   )}
                               </div>
                               <input id="userName" name="userName" type="text" placeholder="UserName" dir="ltr"
                                   required autoFocus defaultValue={state?.values?.userName || ""}
                                   className="block w-full rounded-md px-3 pt-3 pb-2 text-xs outline-1 outline-gray-300"
+                                  pattern="^[a-zA-Z0-9_@#$%^&]{5,50}$"
+                              // حروف لاتین کوچک و بزرگ و اعداد و زیرخط و @#$%^& --- حداقل 5 و حداکثر 50 کاراکتر   --  نام کاربری
                               />
                           </div>
                           {/* passWord ------------ */}
                           <div className="flex flex-col w-[95%] sm:w-[85%] gap-1">
-                              <div className="flex w-full ">
+                              <div className="flex w-full items-center gap-1 ">
                                   <label className="text-right text-[10px] pr-2">گذر واژه :</label>
                                   {state?.errors?.passWord && (
-                                      <label className="text-right text-[10px] pr-2 text-red-600">{state?.errors?.passWord}</label>
+                                      <div className=" h-2 w-2  bg-red-600 rounded-full"></div>
                                   )}
                               </div>
                               <input id="password" name="password" type="password" autoComplete="current-password" placeholder="PassWord" dir="ltr"
                                   required
                                   className="block w-full rounded-md px-3 pt-3 pb-2 text-xs outline-1 outline-gray-300"
+                                  pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&])[a-zA-Z0-9@#$%^&]{5,}$"
+                              //   پسوورد -- پترن پسورود حداقل 5 حرف حتما 	حداقل شامل  1 حرف کوچک -- حداقل 1 حرف بزرگ و  حداقل یک نشانه از @#$%^& باشد
                               />
                           </div>
                           {/* captcha ---------- */}
                           <div className="flex flex-col w-[95%] sm:w-[85%] gap-1 mt-2">
-                              <div className="flex w-full">
+                              <div className="flex w-full items-center gap-1">
                                   <label className="text-right text-[10px] pr-2">کد امنیتی :</label>
                                   {state?.errors?.userCaptcha && (
-                                      <label className="text-right text-[10px] pr-2 text-red-600">{state?.errors?.userCaptcha}</label>
+                                      <div className=" h-2 w-2  bg-red-600 rounded-full"></div>
                                   )}
                               </div>
 
                               <div className="flex flex-col w-full gap-2">
                                   <CaptchaCMP className="w-full flex" name="captchaId" ref={captchaRef} />
                                   {/* <Captcha_InputCMP name="userCaptchaInput" /> */}
-                                  <SplitInput name="userCaptchaInput"/>
+                                  <SplitInput name="userCaptchaInput" />
                               </div>
-
                           </div>
                                    
-                          {/* message place ---------- */}
-                          <div className="flex py-1 mt-4">
-                              {state?.errors?.message && (
-                                  <pre className="w-full text-red-700 text-[10px] text-right">
-                                      {state.errors?.message}
-                                  </pre>
-                              )}
-                          </div>
+                         
                           {/* submit button ---------- */}
                           <div className="flex w-[95%] sm:w-[85%] gap-2 mt-1 text-sm">
                               <button

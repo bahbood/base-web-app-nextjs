@@ -10,14 +10,13 @@ export type LogOutState = {
   success: boolean
   user?: logined_User_Info | null
   errors?: {
-    userCaptcha?: string
-    message?: string
+     userCaptcha?:string
+     publicError?:string
   }
-  values?: {
-    captchaId?: string
-    userCaptchaInput?: string
-  }
+ 
 }
+
+
 
 export async function logoutAction(prevState: LogOutState | null, formData: FormData): Promise<LogOutState> {
   try {
@@ -26,16 +25,18 @@ export async function logoutAction(prevState: LogOutState | null, formData: Form
     const userCaptchaInput = formData.get('userCaptchaInput') as string
 
     // 2. اعتبارسنجی کد امنیتی
+   const userCaptchaInput_validation: boolean =/^[ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789]{5}$/.test(userCaptchaInput)
+
+
     if (!captchaId || !userCaptchaInput) {
       return {
         success: false,
         errors: {
-          userCaptcha: 'کد امنیتی الزامی است',
+          userCaptcha: userCaptchaInput_validation ? "کد امنیتی : بدرستی وارد نشده و یا خالی است ." : undefined,
+          publicError: captchaId!="" ? "اشکال فنی و یا مداخله  در ارسال مقادیر به سرور - با مدیریت سایت تماس بگیرید ." : undefined,
+
         },
-        values: {
-          captchaId,
-          userCaptchaInput,
-        }
+       
       }
     }
 
@@ -45,12 +46,10 @@ export async function logoutAction(prevState: LogOutState | null, formData: Form
       return {
         success: false,
         errors: {
-          userCaptcha: 'کد امنیتی اشتباه است',
+          userCaptcha: "کد امنیتی : بدرستی وارد نشده است ." ,
+
         },
-        values: {
-          captchaId,
-          userCaptchaInput,
-        }
+       
       }
     }
 
@@ -68,7 +67,8 @@ export async function logoutAction(prevState: LogOutState | null, formData: Form
     return {
       success: false,
       errors: {
-        message: 'خطا در خروج از سایت'
+          publicError:"به دلیل بروز اشکال فنی  امکان خروج شما از سایت نیست - با مدیریت سایت تماس بگیرید ."
+
       }
     }
   } catch (error) {
@@ -76,7 +76,8 @@ export async function logoutAction(prevState: LogOutState | null, formData: Form
     return {
       success: false,
       errors: {
-        message: 'خطا در ارتباط با سرور'
+          publicError:"به دلیل بروز اشکال فنی  امکان خروج شما از سایت نیست - با مدیریت سایت تماس بگیرید ."
+
       }
     }
   }

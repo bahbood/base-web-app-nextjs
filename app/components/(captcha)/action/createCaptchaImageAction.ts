@@ -134,20 +134,46 @@ export async function createCaptchaImageAction(length: number = 5) {
 }
 
 // تابع کمکی برای اعتبارسنجی کپچا (در اکشن لاگین استفاده می‌شود)
-export async function verifyCaptcha(captchaId: string, userInput: string): Promise<boolean> {
-  const captchaData = captchaStore.get(captchaId);
+// export async function verifyCaptcha(captchaId: string, userInput: string): Promise<boolean> {
+//   const captchaData = captchaStore.get(captchaId);
   
-  // اگر کپچا وجود نداشت یا منقضی شده بود
+//   // اگر کپچا وجود نداشت یا منقضی شده بود
+//   if (!captchaData || captchaData.expiresAt < Date.now()) {
+//     if (captchaData) captchaStore.delete(captchaId);
+//     return false;
+//   }
+  
+//   // بررسی برابری (حساس به حروف بزرگ و کوچک)
+//   const isValid = captchaData.text.toLowerCase() === userInput.toLowerCase();
+  
+//   // یکبار مصرف - حذف از کش بعد از استفاده
+//   captchaStore.delete(captchaId);
+  
+//   return isValid;
+// }
+
+
+export async function verifyCaptcha(
+  captchaId: string,
+  userInput: string
+): Promise<boolean> {
+
+  const captchaData = captchaStore.get(captchaId);
+
   if (!captchaData || captchaData.expiresAt < Date.now()) {
-    if (captchaData) captchaStore.delete(captchaId);
+    if (captchaData) {
+      captchaStore.delete(captchaId);
+    }
     return false;
   }
-  
-  // بررسی برابری (حساس به حروف بزرگ و کوچک)
-  const isValid = captchaData.text.toLowerCase() === userInput.toLowerCase();
-  
-  // یکبار مصرف - حذف از کش بعد از استفاده
-  captchaStore.delete(captchaId);
-  
+
+  const isValid =
+    captchaData.text.toLowerCase() === userInput.toLowerCase();
+
+  // فقط در صورت موفق بودن حذف شود
+  if (isValid) {
+    captchaStore.delete(captchaId);
+  }
+
   return isValid;
 }

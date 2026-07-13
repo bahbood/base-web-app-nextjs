@@ -9,7 +9,7 @@ async function main() {
 
   async function seedEssentialData_adminUser() {
     try {
-       const hashedPass= await bcrypt.hash("123456",10);
+       const hashedPass= await bcrypt.hash("Mh@123456",10);
 
       // نقش‌های ضروری
       const result = await db.insert(users).values([

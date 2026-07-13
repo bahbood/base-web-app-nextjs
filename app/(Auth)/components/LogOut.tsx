@@ -7,7 +7,7 @@ import FlyoutLayout from "@/app/components/(Flyouts)/FlyoutLayout"
 import { flyoutPageEnum, useFlyoutPage } from "@/app/components/(Flyouts)/(Provider)/FlyoutPageContextProvider"
 import { logoutAction, LogOutState } from "./action/logOutAction"
 import CaptchaCMP, { CaptchaHandler } from "@/app/components/(captcha)/Captcha_CMP"
-import Captcha_InputCMP from "@/app/components/(captcha)/captcha_Input_CMP"
+import SplitInput from "@/app/components/(captcha)/Split_InputCMP"
 
 
 export interface LogOutHandlerRef {
@@ -17,7 +17,7 @@ export interface LogOutHandlerRef {
 }
 
 export default function LogOut({ ref }: { ref?: Ref<LogOutHandlerRef> }) {
-  const { user, setUser ,CloseMe_and_Open } = useFlyoutPage()
+  const { user, setUser ,CloseMe_and_Open ,messageBox_show} = useFlyoutPage()
   const [isOpen, setIsOpen] = useState(false)
   const captchaRef = useRef<CaptchaHandler>(null)
 
@@ -43,8 +43,23 @@ export default function LogOut({ ref }: { ref?: Ref<LogOutHandlerRef> }) {
   }, [state, router, setUser])
 
   useEffect(() => {
-    if (state?.success === false && state?.errors?.userCaptcha) {
+    if (state?.success === false ) {
       captchaRef.current?.clear()
+    }
+  }, [state])
+
+  const messageBoxShowRef = useRef(messageBox_show)
+  useEffect(() => {
+    messageBoxShowRef.current = messageBox_show
+  })
+
+  useEffect(() => {
+    if (state?.success === false)  {
+        let errorMessage:string[] =[];
+        state.errors?.userCaptcha && ( errorMessage.push(state.errors?.userCaptcha))
+        state.errors?.publicError && ( errorMessage.push(state.errors?.publicError))
+     
+        messageBoxShowRef.current("خطا", errorMessage, "error")
     }
   }, [state])
 
@@ -106,19 +121,12 @@ export default function LogOut({ ref }: { ref?: Ref<LogOutHandlerRef> }) {
 
               <div className="flex flex-col w-full gap-2">
                 <CaptchaCMP className="w-full flex" name="captchaId" ref={captchaRef} />
-                <Captcha_InputCMP name="userCaptchaInput" />
+                <SplitInput name="userCaptchaInput" />
               </div>
 
             </div>
 
-            {/* message place */}
-            <div className="flex py-1 mt-4">
-              {state?.errors?.message && (
-                <pre className="w-full text-red-700 text-[10px] text-right">
-                  {state.errors?.message}
-                </pre>
-              )}
-            </div>
+           
 
             {/* submit button */}
             <div className="flex w-[95%] sm:w-[85%] gap-2 mt-1 text-sm">

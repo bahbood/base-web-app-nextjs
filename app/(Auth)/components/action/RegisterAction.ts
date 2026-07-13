@@ -17,13 +17,13 @@ import bcrypt from 'bcryptjs'
 export type RegisterState = {
   success: boolean
  
-  fieldsState?:{
-    userName_isCorrect:boolean 
-    passWord_isCorrect:boolean
-    mobile_number_isCorrect:boolean
-    userCaptcha_isCorrect:boolean
-    userName_alreadyExist:boolean
-    connection_isCorrect:boolean
+  errors?:{
+    userName?:string 
+    passWord?:string
+    mobile_number?:string
+    userCaptcha?:string
+   
+    publicError?:string
  }
   values?:{
     userName:string
@@ -55,14 +55,15 @@ export type RegisterState = {
      
      return {
          success: false,
-         fieldsState:{
-         userName_isCorrect : userName_validation   ,
-         mobile_number_isCorrect: mobile_validation ,
-         passWord_isCorrect : password_validation   ,
-         userCaptcha_isCorrect  : userCaptchaInput_validation, 
-         userName_alreadyExist: false,
-         connection_isCorrect: true
-         },
+         errors:{
+        userName: userName_validation ? "نام کاربری : باید حداقل داری 5 کاراکتر  شامل حروف لاتین ، اعداد ، زیر خط و علامت های @#$%^& باشد ." : undefined,
+        passWord: password_validation ? "گذرواژه : باید  حداقل 5 حرف شامل حداقل  یک حرف کوچک -- حداقل یک حرف بزرگ و  حداقل یک  از نشانه های   @ # $ % ^ &  باشد . " : undefined,
+        mobile_number:mobile_validation ? " شماره همراه : بدرستی وارد نشده است ." :undefined ,
+        userCaptcha: userCaptchaInput_validation ? "کد امنیتی : بدرستی وارد نشده و یا خالی است ." : undefined,
+        publicError: captchaId!="" ? "اشکال فنی و یا مداخله  در ارسال مقادیر به سرور - با مدیریت سایت تماس بگیرید ." : undefined,
+        
+      },
+         
         values:{ 
          userName:userName,
          mobile_number:mobile_number
@@ -77,14 +78,9 @@ export type RegisterState = {
    if ( !captchaResult ) { 
      return {
          success: false,
-         fieldsState:{
-         userName_isCorrect :  true ,
-         passWord_isCorrect :  true ,
-         mobile_number_isCorrect:true ,
-         userCaptcha_isCorrect  : false , // کپچا - کد امنیتی اشتباه است
-         userName_alreadyExist:false,
-         connection_isCorrect:true
-         },
+         errors:{
+        userCaptcha: "کد امنیتی : بدرستی وارد نشده است ." ,
+      },
          values:{ 
          userName:userName,
          mobile_number:mobile_number
@@ -106,14 +102,9 @@ export type RegisterState = {
      if (existingUser.length > 0) {
        return {
          success: false,
-         fieldsState: { 
-          userName_isCorrect :  true ,
-          passWord_isCorrect :  true ,
-          mobile_number_isCorrect:true ,
-          userCaptcha_isCorrect  : true ,
-          userName_alreadyExist:true, // نام کاربری تکراری است
-          connection_isCorrect:true
-         },
+         errors:{
+        userName: "نام کاربری : لطفا از یک نام کاربری دیگر استفاده نمایید . این نام کاربری رزرو شده یا قبلا استفاده شده است ." ,
+      },
          values:{ 
          userName:userName,
          mobile_number:mobile_number
@@ -140,14 +131,9 @@ export type RegisterState = {
      console.error('Register error:', error)
      return {
          success: false,
-         fieldsState:{
-         userName_isCorrect :  true ,
-         passWord_isCorrect :  true ,
-         mobile_number_isCorrect:true ,
-         userCaptcha_isCorrect  : true ,
-         userName_alreadyExist:false,
-         connection_isCorrect:false // ارتباط با سرور مشکل دارد
-         },
+         errors:{
+            publicError:"به دلیل اشکال فنی  امکان ثبت نام شما در سایت نیست - با مدیریت سایت تماس بگیرید ."
+          },
          values:{ 
          userName:userName,
           mobile_number:mobile_number

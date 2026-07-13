@@ -3,11 +3,10 @@
 
 import FlyoutLayout from "@/app/components/(Flyouts)/FlyoutLayout";
 import { Ref, useActionState, useEffect, useImperativeHandle, useRef, useState } from "react";
-import {  RegisterState ,RegisterAction } from "./action/Register";
+import {  RegisterState ,RegisterAction } from "./action/RegisterAction";
 import { flyoutPageEnum, useFlyoutPage } from "@/app/components/(Flyouts)/(Provider)/FlyoutPageContextProvider";
 import CaptchaCMP, { CaptchaHandler } from "@/app/components/(captcha)/Captcha_CMP";
-import Captcha_InputCMP from "@/app/components/(captcha)/captcha_Input_CMP";
-
+import SplitInput from "@/app/components/(captcha)/Split_InputCMP";
 export interface RegisterHandlerRef{
  openMe:()=>void,
   closeMe:()=>void,
@@ -35,7 +34,7 @@ export default function Register({ref }: {ref?:Ref<RegisterHandlerRef>}){
   const [state, formAction, isPending] = useActionState<RegisterState, FormData>( RegisterAction, null )
 
   useEffect(() => {
-    if (state?.success === false && state?.fieldsState?.userCaptcha_isCorrect===false) {
+    if (state?.success === false ) {
       captchaRef.current?.clear()
     }
   }, [state])
@@ -55,13 +54,13 @@ export default function Register({ref }: {ref?:Ref<RegisterHandlerRef>}){
          "success")
 
     } else if (state?.success === false ) {
-        let errorMessage =[];
-        state.fieldsState?.userName_isCorrect===false && ( errorMessage.push("نام کاربری : باید حداقل داری 5 کاراکتر  شامل حروف لاتین ، اعداد ، زیر خط و علامت های @#$%^& باشد"))
-        state.fieldsState?.passWord_isCorrect===false && ( errorMessage.push("گذرواژه : باید شامل حداقل 5 حرف و حداقل شامل یک حرف کوچک -- حداقل یک حرف بزرگ و  حداقل یک نشانه از  @ # $ % ^ &  باشد "))
-        state.fieldsState?.mobile_number_isCorrect===false && ( errorMessage.push("شماره موبایل : باید شامل 11 عدد باشد و با 09 شروع شود"))
-        state.fieldsState?.userCaptcha_isCorrect===false && ( errorMessage.push("کد امنیتی به درستی وارد نشده"))
-        state.fieldsState?.connection_isCorrect===false && ( errorMessage.push("خطا در ارتباط با سرور - دوباره سعی نمایید"))
-        state.fieldsState?.userName_alreadyExist && ( errorMessage.push("نام کاربری : نام کاربری انتخاب شده قبلا استفاده شده است !!! "))
+        let errorMessage:string[] =[];
+        state.errors?.userName && ( errorMessage.push(state.errors?.userName))
+        state.errors?.passWord && ( errorMessage.push(state.errors?.passWord))
+        state.errors?.userCaptcha && ( errorMessage.push(state.errors?.userCaptcha))
+        state.errors?.publicError && ( errorMessage.push(state.errors?.publicError))
+        
+       
       messageBoxShowRef.current("خطا", errorMessage, "error")
     }
   }, [state])
@@ -81,7 +80,7 @@ export default function Register({ref }: {ref?:Ref<RegisterHandlerRef>}){
                                   <div className="flex flex-col w-[95%] sm:w-[85%] gap-1">
                                       <div className="flex w-full items-center gap-1">
                                           <label className="text-right text-[10px] pr-2"> نام کاربری:</label>
-                                          { state?.fieldsState?.userName_isCorrect == false && (
+                                          { state?.errors?.userName && (
                                               <div className=" h-2 w-2  bg-red-600 rounded-full"></div>
                                           )}
                                       </div>
@@ -96,7 +95,7 @@ export default function Register({ref }: {ref?:Ref<RegisterHandlerRef>}){
                                   <div className="flex flex-col w-[95%] sm:w-[85%] gap-1">
                                       <div className="flex w-full items-center gap-1 ">
                                           <label className="text-right text-[10px] pr-2">گذر واژه :</label>
-                                          {state?.fieldsState?.passWord_isCorrect == false &&(
+                                          {state?.errors?.passWord  &&(
                                              <div className=" h-2 w-2  bg-red-600 rounded-full"></div>
                                           )}
                                       </div>
@@ -112,7 +111,7 @@ export default function Register({ref }: {ref?:Ref<RegisterHandlerRef>}){
                                   <div className="flex flex-col w-[95%] sm:w-[85%] gap-1">
                                       <div className="flex w-full items-center gap-1 ">
                                           <label className="text-right text-[10px] pr-2">  شماره موبایل : 09100000000 </label>
-                                          {state?.fieldsState?.mobile_number_isCorrect == false && (
+                                          {state?.errors?.mobile_number && (
                                               <div className=" h-2 w-2  bg-red-600 rounded-full"></div>
                                           )}
                                       </div>
@@ -127,14 +126,15 @@ export default function Register({ref }: {ref?:Ref<RegisterHandlerRef>}){
                           <div className="flex flex-col w-[95%] sm:w-[85%] gap-1 mt-2">
                               <div className="flex w-full items-center gap-1">
                                   <label className="text-right text-[10px] pr-2">کد امنیتی :</label>
-                                  {state?.fieldsState?.userCaptcha_isCorrect == false && (
+                                  {state?.errors?.userCaptcha && (
                                       <div className=" h-2 w-2  bg-red-600 rounded-full"></div>
                                   )}
                               </div>
 
                               <div className="flex flex-col w-full gap-2">
                                   <CaptchaCMP className="w-full flex" name="captchaId" ref={captchaRef} />
-                                  <Captcha_InputCMP name="userCaptchaInput" />
+                                  {/* <Captcha_InputCMP name="userCaptchaInput" /> */}
+                                  <SplitInput name="userCaptchaInput"  />
                               </div>
 
                           </div>

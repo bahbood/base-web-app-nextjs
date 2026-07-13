@@ -14,19 +14,20 @@ import captchaValidationAction from '@/app/components/(captcha)/action/captchaVa
 export type LoginState = {
   success: boolean
   user?: logined_User_Info | null
-  errors?:{
-    userName?:string
+ 
+ errors?:{
+    userName?:string 
     passWord?:string
     userCaptcha?:string
-    message?:string
+   
+    publicError?:string
  }
   values?:{
     userName:string
-    
  }
  } | null
 
- 
+
 
 export async function loginAction(prevState: LoginState, formData: FormData): Promise<LoginState> {
   // 1. دریافت داده‌های فرم
@@ -35,14 +36,13 @@ export async function loginAction(prevState: LoginState, formData: FormData): Pr
   const captchaId = formData.get('captchaId') as string
   const userCaptchaInput = formData.get('userCaptchaInput') as string
 
- 
-
+ //console.log(" >>>>>>>> ", "u:",userName ,"  p:",password ,"  cpid:",captchaId , "   ucp:", userCaptchaInput)
   
   // 2. اعتبارسنجی اولیه
 
-  const userName_validation: boolean =  /^[a-zA-Z0-9@#$%^&]{1,20}$/.test(userName)
-  const password_validation: boolean =  /^[a-zA-Z0-9@#$%^&]{6,20}$/.test(password)
-  const userCaptchaInput_validation: boolean =/^[ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789]{5}$/.test(userCaptchaInput)
+   const userName_validation: boolean =  /^[a-zA-Z0-9_@#$%^&]{5,50}$/.test(userName)
+   const password_validation: boolean =  /^[a-zA-Z0-9@#$%^&]{6,20}$/.test(password)
+   const userCaptchaInput_validation: boolean =/^[ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789]{5}$/.test(userCaptchaInput)
 
   if (!userName_validation || !password_validation || !captchaId || !userCaptchaInput_validation) {
     
@@ -50,13 +50,14 @@ export async function loginAction(prevState: LoginState, formData: FormData): Pr
     // console.log(" u: "+userName_validation.toString() +" p: " +password_validation.toString() + " capId : "+ captchaId +" Cap_in: " +userCaptchaInput_validation.toString() +" ")
 
     return {
-        success: false,
-        errors:{
-        userName : userName_validation ? undefined : "نام کاربری بدرستی وارد نشده"  ,
-        passWord : password_validation ? undefined : "گذرواژه  بدرستی وارد نشده"  ,
-        userCaptcha  : userCaptchaInput_validation ? undefined : "کد امنیتی  بدرستی وارد نشده"  , 
-        message:"مقادیر درخواستی بدرستی وارد نشده اند"
-        },
+       success: false,
+      errors:{
+        userName: userName_validation ? "نام کاربری : باید حداقل داری 5 کاراکتر  شامل حروف لاتین ، اعداد ، زیر خط و علامت های @#$%^& باشد ." : undefined,
+        passWord: password_validation ? "گذرواژه : باید  حداقل 5 حرف شامل حداقل  یک حرف کوچک -- حداقل یک حرف بزرگ و  حداقل یک  از نشانه های   @ # $ % ^ &  باشد . " : undefined,
+        userCaptcha: userCaptchaInput_validation ? "کد امنیتی : بدرستی وارد نشده و یا خالی است ." : undefined,
+        publicError: captchaId!="" ? "اشکال فنی و یا مداخله  در ارسال مقادیر به سرور - با مدیریت سایت تماس بگیرید ." : undefined,
+        
+      },
        values:{ 
         userName:userName,
        }
@@ -66,15 +67,14 @@ export async function loginAction(prevState: LoginState, formData: FormData): Pr
  
   // 3. اعتبارسنجی کد امنیتی 
   const captchaResult = await captchaValidationAction(captchaId, userCaptchaInput);
- 
+
+//  console.log(" 71 >>>>>>>> ", "captchaResult:",captchaResult )
   if ( !captchaResult ) { 
     return {
         success: false,
         errors:{
-        userName :  undefined ,
-        passWord :  undefined ,
-        userCaptcha  : "کد امنیتی بدرستی وارد نشده"  ,
-        },
+        userCaptcha: "کد امنیتی : بدرستی وارد نشده است ." ,
+      },
         values:{ 
         userName:userName,
        }
@@ -96,7 +96,10 @@ export async function loginAction(prevState: LoginState, formData: FormData): Pr
     if (user.length === 0) {
       return {
         success: false,
-        errors: { message: '  !!! نام کاربری یا گذرواژه  اشتباه است  ' },
+        errors:{
+          userName:" نام کاربری و یا گذرواژه صحیح نیست . مجددا سعی نمایید . "
+        }
+        ,
         values:{ 
         userName:userName,
        }
@@ -110,7 +113,9 @@ export async function loginAction(prevState: LoginState, formData: FormData): Pr
       return {
        
           success: false,
-          errors: { message: '  !!! نام کاربری یا گذرواژه  اشتباه است  ' },
+          errors:{
+          userName:" نام کاربری و یا گذرواژه صحیح نیست . مجددا سعی نمایید . "
+        },
           values: { userName }
         };
       }
@@ -125,8 +130,9 @@ export async function loginAction(prevState: LoginState, formData: FormData): Pr
        return {
           success: false,
           errors:{
-          message: ' !!! خطایی در پروسه ورود کاربر ایجاد شده  ',
-          },
+            publicError:"به دلیل اشکال فنی  امکان ورود شما به سایت نیست - با مدیریت سایت تماس بگیرید ."
+          }
+          ,
            values:{ 
            userName:userName,
        }
@@ -146,9 +152,9 @@ export async function loginAction(prevState: LoginState, formData: FormData): Pr
     console.error('Login error:', error)
     return {
         success: false,
-        errors:{
-        message:'خطا در ارتباط با سرور - دوباره سعی نمایید!!!' 
-        },
+       errors:{
+            publicError:"به دلیل اشکال فنی  امکان ورود شما به سایت نیست - با مدیریت سایت تماس بگیرید ."
+          },
         values:{ 
         userName:userName,
        }
