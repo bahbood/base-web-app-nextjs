@@ -79,6 +79,8 @@ export function FlyoutPageProvider({ children , initialUser = null }: { children
                   messageBox_close();
   }
 
+  const [messageBoxVisible, setMessageBoxVisible] = useState(false);
+
  const messageBox_show = (
     caption: string,
     messages: string[],
@@ -90,20 +92,26 @@ export function FlyoutPageProvider({ children , initialUser = null }: { children
         caption,
         messages,
         type
-    })
+    });
 
-}
+    requestAnimationFrame(() => {
+        setMessageBoxVisible(true);
+    });
+};
 
 const messageBox_close = () => {
 
-    setMessageBox({
-        show: false,
-        caption: "",
-        messages: [],
-        type: "info"
-    })
+    setMessageBoxVisible(false);
 
-}
+    setTimeout(() => {
+        setMessageBox({
+            show: false,
+            caption: "",
+            messages: [],
+            type: "info"
+        });
+    }, 250);
+};
 
   const CloseMe_and_Open=(replacePage : flyoutPageEnum)=>{
     closeAllForm();
@@ -168,27 +176,33 @@ messageBox_close
        <RegisterSW/>
 
        {/* popup message box on top off all *************** */}
-          {messageBox.show && (
-                        
-                        <div className="fixed flex w-full h-dvh justify-center items-center z-60 ">
-                            <div className="flex flex-col landscape:w-md portrait:w-[90%] max-h-[70%]  bg-white border-2 border-gray-500 rounded-sm shadow-sm shadow-gray-400 ">
-                                <span className={`${headerColor} text-white p-3`} > {messageBox.caption} </span>
-                                <div className="flex flex-col items-center w-full flex-1 bg-gray-100 px-3 py-2 overflow-y-scroll">
-                                  { messageBox.messages &&
-                                    messageBox.messages.map( (message , index)  =>
-                                      <p  key={index} className="block w-full text-justify indent-1 text-xs py-1">
-                                          { message }
-                                      </p>
-                                    )
-                                  }
-                                  
-                                  <button onClick={messageBox_close}  
-                                  className="w-[85%]  py-3 bg-lime-500 text-white text-center text-md rounded-sm my-4 cursor-pointer"> متوجه شدم </button>
+      {messageBox.show && (
 
-                                </div>
-                            </div>
-                        </div>
-        )}   
+        <div className={` fixed inset-0 z-60 flex justify-center items-center bg-black/30
+            transition-opacity duration-500
+            ${messageBoxVisible ? "opacity-100" : "opacity-0"}
+        `}>
+          <div className={` flex flex-col landscape:w-md portrait:w-[90%] max-h-[70%] bg-white border-2 border-gray-500 rounded-sm shadow-lg
+                transition-all duration-500
+                ${ messageBoxVisible ? "opacity-100 scale-100 translate-y-0": "opacity-0 scale-90 translate-y-6" }
+            `}>
+            <span className={`${headerColor} text-white p-3`} > {messageBox.caption} </span>
+            <div className="flex flex-col items-center w-full flex-1 bg-gray-100 px-3 py-2 overflow-y-scroll">
+              {messageBox.messages &&
+                messageBox.messages.map((message, index) =>
+                  <p key={index} className="block w-full text-justify indent-1 text-xs py-1">
+                    {message}
+                  </p>
+                )
+              }
+
+              <button onClick={messageBox_close}
+                className="w-[85%]  py-3 bg-lime-500 text-white text-center text-md rounded-sm my-4 cursor-pointer"> متوجه شدم </button>
+
+            </div>
+          </div>
+        </div>
+      )}   
         {/* popup message box end *************** */}
 
         {/* فرم ها و برگ های پرنده       */}
