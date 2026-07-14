@@ -65,6 +65,8 @@ export default function Register({ref }: {ref?:Ref<RegisterHandlerRef>}){
     }
   }, [state])
 
+  const [sms_Pending , setSms_Pending]=useState(false);
+
     return(
           <FlyoutLayout onCloseMe={closeMe} isOpen={isOpen}>
                       <div id="content" className="flex flex-col w-full h-full  items-center gap-2 portrait:px-3 ">
@@ -107,6 +109,10 @@ export default function Register({ref }: {ref?:Ref<RegisterHandlerRef>}){
                                       />
                                   </div>
 
+
+<hr  className="w-[90%] border-gray-300 mt-3 "/>
+
+
                                    {/* mobile number ----------- */}
                                   <div className="flex flex-col w-[95%] sm:w-[85%] gap-1">
                                       <div className="flex w-full items-center gap-1 ">
@@ -121,6 +127,35 @@ export default function Register({ref }: {ref?:Ref<RegisterHandlerRef>}){
                                           pattern="^09[0-9]{9}$"
                                       />
                                   </div>
+
+                                  {/* sms code button ---------- */}
+                                  <div className="flex w-[70%] sm:w-[70%] gap-2 mt-1 text-sm">
+                                      <button
+                                          type="button"
+                                          className="block bg-lime-500 text-white w-full rounded-md px-3 pt-2 pb-2 text-xs text-center outline-0 disabled:opacity-50"
+                                          disabled={sms_Pending}
+                                      >
+                                          {sms_Pending ? " کد تایید پیامکی ارسال شد . . ." : "ارسال کد تایید پیامکی"}
+                                      </button>
+                                  </div>
+        
+                                  {/* register button ---------- */}
+                                  <div className="flex flex-col w-[95%] sm:w-[85%] gap-2 mt-2 justify-center">
+                                      <div className="flex w-full items-center gap-1 ">
+                                          <label className="text-right text-[10px] pr-2">   کد تایید پیامکی :  </label>
+                                          {/* {state?.errors?.mobile_number && (
+                                              <div className=" h-2 w-2  bg-red-600 rounded-full"></div>
+                                          )} */}
+                                      </div>
+                                      <input id="sms_code" name="sms_code" type="text" placeholder="sms_code" dir="ltr"
+                                          required  
+                                          className="block w-full rounded-md px-3 pt-3 pb-2 text-xs outline-1 outline-gray-300"
+                                          pattern="^[0-9]{5}$"
+                                      />
+                                  </div>
+
+
+ <hr  className="w-[90%] border-gray-300 mb-3"/>
 
                                  {/* captcha ---------- */}
                           <div className="flex flex-col w-[95%] sm:w-[85%] gap-1 mt-2">

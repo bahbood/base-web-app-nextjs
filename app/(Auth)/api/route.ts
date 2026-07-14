@@ -26,3 +26,52 @@ export async function GET() {
     }, { status: 500 })
   }
 }
+
+
+export async function Send_SMS({
+  mobile_number,
+  message_text,
+  verify_code
+}: {
+  mobile_number: string;
+  message_text: string;
+  verify_code: string;
+}) {
+  const apiKey = process.env.SMS_API_KEY;
+
+  if (!apiKey) {
+    throw new Error("SMS_IR_API_KEY is not defined.");
+  }
+
+  const response = await fetch(
+    "https://api.sms.ir/v1/send/verify",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "text/plain",
+        "x-api-key": apiKey,
+      },
+      body: JSON.stringify({
+        lineNumber: mobile_number,
+        messageText : verify_code ,
+        "mobiles": [
+          mobile_number,
+        ],
+        "sendDateTime": null
+      }),
+    }
+  );
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message ?? "پیامک ارسال نشد.");
+  }
+
+  return result;
+}
+
+
+
+ 
