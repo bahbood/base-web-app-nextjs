@@ -7,6 +7,7 @@ import {  RegisterState ,RegisterAction } from "./action/RegisterAction";
 import { flyoutPageEnum, useFlyoutPage } from "@/app/components/(Flyouts)/(Provider)/FlyoutPageContextProvider";
 import CaptchaCMP, { CaptchaHandler } from "@/app/components/(captcha)/Captcha_CMP";
 import SplitInput from "@/app/components/(captcha)/Split_InputCMP";
+import { sendSmsAction } from "./action/sendSmsAction";
 export interface RegisterHandlerRef{
  openMe:()=>void,
   closeMe:()=>void,
@@ -58,6 +59,7 @@ export default function Register({ref }: {ref?:Ref<RegisterHandlerRef>}){
         state.errors?.userName && ( errorMessage.push(state.errors?.userName))
         state.errors?.passWord && ( errorMessage.push(state.errors?.passWord))
         state.errors?.userCaptcha && ( errorMessage.push(state.errors?.userCaptcha))
+        state.errors?.sms_code && ( errorMessage.push(state.errors?.sms_code))
         state.errors?.publicError && ( errorMessage.push(state.errors?.publicError))
         
        
@@ -66,6 +68,50 @@ export default function Register({ref }: {ref?:Ref<RegisterHandlerRef>}){
   }, [state])
 
   const [sms_Pending , setSms_Pending]=useState(false);
+  const [countdown, setCountdown]=useState(0);
+  const countdownRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleSendSms = async () => {
+    const mobileInput = document.getElementById('mobile_number') as HTMLInputElement;
+    const mobile = mobileInput?.value;
+    if (!mobile || !/^09[0-9]{9}$/.test(mobile)) {
+      messageBoxShowRef.current("خطا", ["شماره موبایل را صحیح وارد کنید."], "error");
+      return;
+    }
+    setSms_Pending(true);
+    const result = await sendSmsAction(mobile);
+    setSms_Pending(false);
+    if (result?.success) {
+      setCountdown(300);
+      messageBoxShowRef.current("موفق", ["کد تایید پیامکی ارسال شد."], "success");
+    } else {
+      messageBoxShowRef.current("خطا", [result?.message || "ارسال پیامک ناموفق بود."], "error");
+    }
+  };
+
+  const countdownActive = countdown > 0;
+
+  useEffect(() => {
+    if (!countdownActive) return;
+    countdownRef.current = setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) {
+          if (countdownRef.current) clearInterval(countdownRef.current);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => {
+      if (countdownRef.current) clearInterval(countdownRef.current);
+    };
+  }, [countdownActive]);
+
+  const formatCountdown = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  };
 
     return(
           <FlyoutLayout onCloseMe={closeMe} isOpen={isOpen}>
@@ -128,14 +174,20 @@ export default function Register({ref }: {ref?:Ref<RegisterHandlerRef>}){
                                       />
                                   </div>
 
-                                  {/* sms code button ---------- */}
+                                   {/* sms code button ---------- */}
                                   <div className="flex w-[70%] sm:w-[70%] gap-2 mt-1 text-sm">
                                       <button
                                           type="button"
+                                          id="smsBTN"
                                           className="block bg-lime-500 text-white w-full rounded-md px-3 pt-2 pb-2 text-xs text-center outline-0 disabled:opacity-50"
-                                          disabled={sms_Pending}
+                                          disabled={sms_Pending || countdown > 0}
+                                          onClick={handleSendSms}
                                       >
-                                          {sms_Pending ? " کد تایید پیامکی ارسال شد . . ." : "ارسال کد تایید پیامکی"}
+                                          {countdown > 0
+                                            ? `${formatCountdown(countdown)} ارسال مجدد`
+                                            : sms_Pending
+                                              ? " در حال ارسال . . ."
+                                              : "ارسال کد تایید پیامکی"}
                                       </button>
                                   </div>
         
@@ -143,9 +195,9 @@ export default function Register({ref }: {ref?:Ref<RegisterHandlerRef>}){
                                   <div className="flex flex-col w-[95%] sm:w-[85%] gap-2 mt-2 justify-center">
                                       <div className="flex w-full items-center gap-1 ">
                                           <label className="text-right text-[10px] pr-2">   کد تایید پیامکی :  </label>
-                                          {/* {state?.errors?.mobile_number && (
+                                          {state?.errors?.sms_code && (
                                               <div className=" h-2 w-2  bg-red-600 rounded-full"></div>
-                                          )} */}
+                                          )}
                                       </div>
                                       <input id="sms_code" name="sms_code" type="text" placeholder="sms_code" dir="ltr"
                                           required  

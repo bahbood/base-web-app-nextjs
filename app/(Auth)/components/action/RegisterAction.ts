@@ -13,6 +13,7 @@ import { db , } from '@/app/db'
 import { eq } from 'drizzle-orm'
 import { users } from '@/app/db/schema'
 import bcrypt from 'bcryptjs'
+import { verifySmsCode } from '@/app/(Auth)/lib/smsCache'
 
 export type RegisterState = {
   success: boolean
@@ -22,6 +23,7 @@ export type RegisterState = {
     passWord?:string
     mobile_number?:string
     userCaptcha?:string
+    sms_code?:string
    
     publicError?:string
  }
@@ -40,6 +42,7 @@ export type RegisterState = {
    const mobile_number = formData.get('mobile_number') as string
    const captchaId = formData.get('captchaId') as string
    const userCaptchaInput = formData.get('userCaptchaInput') as string
+   const sms_code = formData.get('sms_code') as string
  
   
  
@@ -50,8 +53,9 @@ export type RegisterState = {
    const mobile_validation: boolean =  /^09[0-9]{9}$/.test(mobile_number)
    const password_validation: boolean =  /^[a-zA-Z0-9@#$%^&]{6,20}$/.test(password)
    const userCaptchaInput_validation: boolean =/^[ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789]{5}$/.test(userCaptchaInput)
+   const sms_code_validation: boolean = /^[0-9]{5}$/.test(sms_code)
  
-   if (!userName_validation || !mobile_validation || !password_validation || !captchaId || !userCaptchaInput_validation) {
+   if (!userName_validation || !mobile_validation || !password_validation || !captchaId || !userCaptchaInput_validation || !sms_code_validation) {
      
      return {
          success: false,
@@ -60,6 +64,7 @@ export type RegisterState = {
         passWord: password_validation ? "گذرواژه : باید  حداقل 5 حرف شامل حداقل  یک حرف کوچک -- حداقل یک حرف بزرگ و  حداقل یک  از نشانه های   @ # $ % ^ &  باشد . " : undefined,
         mobile_number:mobile_validation ? " شماره همراه : بدرستی وارد نشده است ." :undefined ,
         userCaptcha: userCaptchaInput_validation ? "کد امنیتی : بدرستی وارد نشده و یا خالی است ." : undefined,
+        sms_code: sms_code_validation ? "کد تایید پیامکی : بدرستی وارد نشده است ." : undefined,
         publicError: captchaId!="" ? "اشکال فنی و یا مداخله  در ارسال مقادیر به سرور - با مدیریت سایت تماس بگیرید ." : undefined,
         
       },
@@ -87,6 +92,21 @@ export type RegisterState = {
         }
       }
    }
+
+  // 3.5. اعتبارسنجی کد تایید پیامکی 
+  const smsCodeValid = verifySmsCode(mobile_number, sms_code);
+  if (!smsCodeValid) {
+    return {
+      success: false,
+      errors:{
+        sms_code: "کد تایید پیامکی : نامعتبر یا منقضی شده است . لطفا مجددا ارسال کنید .",
+      },
+      values:{ 
+        userName:userName,
+        mobile_number:mobile_number
+      }
+    }
+  }
  
   // 4. بررسی تکراری نبودن نام کاربری و ذخیره در دیتابیس
 
@@ -119,6 +139,8 @@ export type RegisterState = {
      await db.insert(users).values({
        user_name: userName,
        password: hashedPassword,
+       mobile_number: mobile_number,
+       mobile_number_isvalid: true,
        role: 'user',
        is_active: true,
      });
