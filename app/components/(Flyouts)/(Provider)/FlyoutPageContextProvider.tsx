@@ -9,6 +9,7 @@ import LogOut, { LogOutHandlerRef } from '@/app/(Auth)/components/LogOut'
 import Register, { RegisterHandlerRef } from '@/app/(Auth)/components/Register'
 import Profile, { ProfileHandlerRef } from '@/app/(Auth)/components/Profile'
 import ResetPassword, { ResetPasswordHandlerRef } from '@/app/(Auth)/components/ResetPassword'
+import ChangePassword, { ChangePasswordHandlerRef } from '@/app/(Auth)/components/ChangePassword'
 
 type MessageBoxState = {
     show: boolean
@@ -26,8 +27,10 @@ interface I_FlyoutPageProviderContext{
   logOutPage_toggleShow:()=>void
   ProfilePage_toggleShow:()=>void
   RegisterPage_toggleShow:()=>void
-
-   messageBox_show(
+  ResetPasswordPage_toggleShow:()=>void
+  ChangePasswordPage_toggleShow:()=>void
+  
+  messageBox_show(
     caption: string,
     messages:string[],
     type?: MessageBoxState["type"]
@@ -49,7 +52,7 @@ export type logined_User_Info = {
   email?: string;
 };
 
-export enum flyoutPageEnum{ login,logout,register,profile,resetPassword,sideMenu }
+export enum flyoutPageEnum{ login , logout , register , profile , resetPassword , ChangePassword , sideMenu }
 
 const FlyoutPageContext = createContext<I_FlyoutPageProviderContext | undefined >(undefined)
 
@@ -71,6 +74,7 @@ export function FlyoutPageProvider({ children , initialUser = null }: { children
   const RegisterHandler=useRef<RegisterHandlerRef>(null)
   const ProfileHandler=useRef<ProfileHandlerRef>(null)
   const ResetPasswordHandler=useRef<ResetPasswordHandlerRef>(null)
+   const ChangePasswordHandler=useRef<ChangePasswordHandlerRef>(null)
 
   const closeAllForm=()=>{
                   SideMenuHandler.current?.closeMe();
@@ -79,6 +83,7 @@ export function FlyoutPageProvider({ children , initialUser = null }: { children
                   ProfileHandler.current?.closeMe();
                   RegisterHandler.current?.closeMe();
                   ResetPasswordHandler.current?.closeMe();
+                  ChangePasswordHandler.current?.closeMe();
                   messageBox_close();
   }
 
@@ -135,6 +140,9 @@ const messageBox_close = () => {
       case flyoutPageEnum.resetPassword:
         ResetPasswordHandler.current?.ToggleShow()
       break;
+      case flyoutPageEnum.ChangePassword:
+        ChangePasswordHandler.current?.ToggleShow()
+      break;
       case flyoutPageEnum.sideMenu:
         SideMenuHandler.current?.ToggleShow()
       break;
@@ -166,6 +174,11 @@ const messageBox_close = () => {
                 ProfilePage_toggleShow :()=>{ closeAllForm(); ProfileHandler.current?.ToggleShow() }
                 ,
                 RegisterPage_toggleShow :()=>{ closeAllForm(); RegisterHandler.current?.ToggleShow() }
+                ,
+                
+                ChangePasswordPage_toggleShow : ()=>{ closeAllForm(); ChangePasswordHandler.current?.ToggleShow() }
+                ,
+                ResetPasswordPage_toggleShow : ()=>{ closeAllForm(); ResetPasswordHandler.current?.ToggleShow() }
                 ,
 
 messageBox,
@@ -218,7 +231,7 @@ messageBox_close
        <Profile ref={ProfileHandler} />
        <Register  ref={RegisterHandler} />
        <ResetPassword ref={ResetPasswordHandler} />
-          
+       <ChangePassword ref={ChangePasswordHandler} /> 
 
 
       {children}

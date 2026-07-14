@@ -5,7 +5,7 @@
 import { useActionState, useState, useEffect, useRef,  useImperativeHandle, Ref } from "react"
 import { useRouter } from "next/navigation"
 import FlyoutLayout from "@/app/components/(Flyouts)/FlyoutLayout"
-import { useFlyoutPage } from "@/app/components/(Flyouts)/(Provider)/FlyoutPageContextProvider"
+import { flyoutPageEnum, useFlyoutPage } from "@/app/components/(Flyouts)/(Provider)/FlyoutPageContextProvider"
 import { ProfileAction, ProfileState } from "./action/profileAction"
 import CaptchaCMP, { CaptchaHandler } from "@/app/components/(captcha)/Captcha_CMP"
 import Captcha_InputCMP from "@/app/components/(captcha)/captcha_Input_CMP"
@@ -18,7 +18,7 @@ export interface ProfileHandlerRef{
 
 
 export default function Profile( {ref }: {ref?:Ref<ProfileHandlerRef>} ) {
-  const { setUser, user } = useFlyoutPage()
+  const { setUser, user , CloseMe_and_Open} = useFlyoutPage()
     const[isOpen , setIsOpen]=useState(false)
   
     useImperativeHandle(ref , ()=>({
@@ -173,19 +173,19 @@ export default function Profile( {ref }: {ref?:Ref<ProfileHandlerRef>} ) {
                               </button>
                           </div>
 
-                          {/* register button ---------- */}
-                          {/* <div className="flex flex-col w-[95%] sm:w-[85%] gap-2 mt-2 justify-center">
+                          {/* ChangePassword   ---------- */}
+                          <div className="flex flex-col w-[95%] sm:w-[85%] gap-2 mt-2 justify-center">
                               <p className="w-full mt-5 text-center text-sm/6">
-                                  عضو سایت نیستید ؟{' '}
+                                 
                                   <button
                                       type="button"
                                       className="text-sm font-extrabold text-sky-600 hover:text-sky-400 hover:cursor-pointer"
-
+                                        onClick={()=>{ CloseMe_and_Open(flyoutPageEnum.ChangePassword) }}
                                   >
-                                      ثبت نام
+                                      فرم تغییر گذرواژه ( کلمه عبور ) 
                                   </button>
                               </p>
-                          </div> */}
+                          </div>
 
 
                       </form>
