@@ -139,10 +139,19 @@ export default function LogIn({ ref }: { ref?: Ref<LoginHandlerRef> }) {
                                   عضو سایت نیستید ؟{' '}
                                   <button
                                       type="button"
-                                      className="text-sm font-extrabold text-sky-600 hover:text-sky-400 hover:cursor-pointer"
+                                      className="text-xs font-extrabold text-sky-600 hover:text-sky-400 hover:cursor-pointer"
                                     onClick={()=>{ CloseMe_and_Open(flyoutPageEnum.register) }}
                                   >
                                       ثبت نام
+                                  </button>
+                              </p>
+                          
+                              <p className="w-full mt-3 text-center text-sm/6">
+                                 گذرواژه را فراموش کرده اید ؟{' '}
+                                  <button type="button" className="text-xs font-extrabold text-sky-600 hover:text-sky-400 hover:cursor-pointer"
+                                    onClick={()=>{ CloseMe_and_Open(flyoutPageEnum.resetPassword) }}
+                                  >
+                                      بازیابی گذرواژه 
                                   </button>
                               </p>
                           </div>

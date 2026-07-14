@@ -8,6 +8,7 @@ import LogIn, { LoginHandlerRef } from '@/app/(Auth)/components/LogIn'
 import LogOut, { LogOutHandlerRef } from '@/app/(Auth)/components/LogOut'
 import Register, { RegisterHandlerRef } from '@/app/(Auth)/components/Register'
 import Profile, { ProfileHandlerRef } from '@/app/(Auth)/components/Profile'
+import ResetPassword, { ResetPasswordHandlerRef } from '@/app/(Auth)/components/ResetPassword'
 
 type MessageBoxState = {
     show: boolean
@@ -48,7 +49,7 @@ export type logined_User_Info = {
   email?: string;
 };
 
-export enum flyoutPageEnum{ login,logout,register,profile,sideMenu }
+export enum flyoutPageEnum{ login,logout,register,profile,resetPassword,sideMenu }
 
 const FlyoutPageContext = createContext<I_FlyoutPageProviderContext | undefined >(undefined)
 
@@ -69,6 +70,7 @@ export function FlyoutPageProvider({ children , initialUser = null }: { children
   const LogOutHandler= useRef<LogOutHandlerRef>(null)
   const RegisterHandler=useRef<RegisterHandlerRef>(null)
   const ProfileHandler=useRef<ProfileHandlerRef>(null)
+  const ResetPasswordHandler=useRef<ResetPasswordHandlerRef>(null)
 
   const closeAllForm=()=>{
                   SideMenuHandler.current?.closeMe();
@@ -76,6 +78,7 @@ export function FlyoutPageProvider({ children , initialUser = null }: { children
                   LogOutHandler.current?.closeMe();
                   ProfileHandler.current?.closeMe();
                   RegisterHandler.current?.closeMe();
+                  ResetPasswordHandler.current?.closeMe();
                   messageBox_close();
   }
 
@@ -128,6 +131,9 @@ const messageBox_close = () => {
       break;
       case flyoutPageEnum.profile:
         ProfileHandler.current?.ToggleShow()
+      break;
+      case flyoutPageEnum.resetPassword:
+        ResetPasswordHandler.current?.ToggleShow()
       break;
       case flyoutPageEnum.sideMenu:
         SideMenuHandler.current?.ToggleShow()
@@ -211,6 +217,7 @@ messageBox_close
        <LogOut ref={LogOutHandler} />
        <Profile ref={ProfileHandler} />
        <Register  ref={RegisterHandler} />
+       <ResetPassword ref={ResetPasswordHandler} />
           
 
 
