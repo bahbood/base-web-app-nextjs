@@ -43,6 +43,7 @@ export default function SideMenu({ref }: {ref?:Ref<SideMenuHandlerRef>}) {
 
 //  const {sideMenu:{ menu_isOpen, menuClose }} = useFlyoutPage()
   const currentPath = usePathname();
+  const { user } = useFlyoutPage();
 
   const[isOpen , setIsOpen]=useState(false)
 
@@ -94,7 +95,7 @@ export default function SideMenu({ref }: {ref?:Ref<SideMenuHandlerRef>}) {
 
               {/* آیتم‌های منو */}
               <div className='flex w-full p-2 gap-1'>
-              <Link className="flex basis-1/5 aspect-square bg-sky-500 hover:bg-sky-500/40 stroke-slate-200 hover:stroke-slate-600 text-slate-200 hover:text-slate-600
+                <Link className="flex basis-1/5 aspect-square bg-sky-500 hover:bg-sky-500/40 stroke-slate-200 hover:stroke-slate-600 text-slate-200 hover:text-slate-600
                                  rounded-sm flex-col justify-center items-center gap-1 relative transition duration-500 ease-in-out" href="/" 
                                  onClick={()=>setIsOpen(false)}
                                  >
@@ -167,22 +168,70 @@ export default function SideMenu({ref }: {ref?:Ref<SideMenuHandlerRef>}) {
                 </Link>
                 </div>
 
-                <div className='flex flex-col w-full mx-auto gap-3 px-3 py-2  bg-gray-200'>
-                <Link className='text-xs hover:text-orange-600' href='/slides' onClick={()=>setIsOpen(false)}>مدیریت اسلاید ها </Link>
-                <Link className='text-xs hover:text-orange-600' href='/users' onClick={()=>setIsOpen(false)}>لیست یوزر  ها </Link>
-                <Link className='text-xs hover:text-orange-600' href='/users/passToHash' onClick={()=>setIsOpen(false)}>  تبدیل تکست به هش </Link>
-                
-                </div>
 
-                <div className='flex flex-col w-full mx-auto gap-3 px-3 py-2  bg-gray-200'>
+ {/* show for admin only  - admin panel*/}
+              {user?.role === 'admin' && (
+              <div className=' w-full  bg-gray-200'>
+                <label className='block w-full px-2 py-2 bg-sky-300 text-white  text-xs'>مدیریت  سایت</label>
+                <div className='flex flex-col w-full mx-auto gap-3 px-3 py-2  '>
+                  <ul>
+                    <li> 
+                      <Link className='text-xs hover:text-orange-600' href='/users' onClick={() => setIsOpen(false)}>لیست یوزر  ها </Link>
+                    </li>
+                    <li>
+                      <Link className='text-xs hover:text-orange-600' href='/users/passToHash' onClick={() => setIsOpen(false)}>  تبدیل تکست به هش </Link>
+
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              )}
+
+
+{/* show for admin only */}
+              {user?.role === 'admin' && (
+              <div className=' w-full  bg-gray-200'> 
+                <label className='block w-full px-2 py-2 bg-sky-300 text-white  text-xs'>مدیریت اسلایدر اصلی</label>
+                <div className='flex flex-col w-full mx-auto gap-3 px-3 py-2  '>
+                  <Link className='text-xs hover:text-orange-600' href='/slides' onClick={() => setIsOpen(false)}>مدیریت اسلاید ها </Link>
+                </div>
+              </div>
+              )}
+
+{/* show for users that have active store */}
+              {user?.store_active && (
+              <div className=' w-full  bg-gray-200'>
+                <label className='block w-full px-2 py-2 bg-sky-300 text-white  text-xs'>مدیریت  فروشگاه :</label>
+                <div className='flex flex-col w-full mx-auto gap-3 px-3 py-2  '>
                 <Link className='text-xs hover:text-orange-600' href='/storeProfile' onClick={()=>setIsOpen(false)}>مدیریت فروشگاه </Link>
                 <Link className='text-xs hover:text-orange-600' href='/storeActivation' onClick={()=>setIsOpen(false)} >فعال سازی فروشگاه</Link>
                 </div>
+              </div>
+              )}
 
-                <div className='flex flex-col w-full mx-auto gap-3 px-3 py-2  bg-gray-200'>
+{/* show for users that have active newsAgency */}
+              {user?.news_agency_active && (
+              <div className=' w-full  bg-gray-200'>
+                <label className='block w-full px-2 py-2 bg-sky-300 text-white  text-xs'>مدیریت  رسانه خبری :</label>
+                <div className='flex flex-col w-full mx-auto gap-3 px-3 py-2  '>
                 <Link className='text-xs hover:text-orange-600' href='/newsAgencyProfile' onClick={()=>setIsOpen(false)}>مدیریت خبرنامه </Link>
                 <Link className='text-xs hover:text-orange-600' href='/newsAgencyActivation' onClick={()=>setIsOpen(false)} >فعال سازی خبرنامه</Link>
                 </div>
+              </div>
+              )}
+
+{/* show for users that have active serviceis */}
+              {user?.serviceman_active && (
+              <div className=' w-full  bg-gray-200'>
+                <label className='block w-full px-2 py-2 bg-sky-300 text-white  text-xs'>مدیریت  خدمات و سرویس :</label>
+                <div className='flex flex-col w-full mx-auto gap-3 px-3 py-2  '>
+                <Link className='text-xs hover:text-orange-600' href='/' onClick={()=>setIsOpen(false)}>مدیریت خدمات </Link>
+                <Link className='text-xs hover:text-orange-600' href='/' onClick={()=>setIsOpen(false)} >فعال سازی خدمات</Link>
+                </div>
+              </div>
+              )}
+
+             
 
             </div>
           </motion.div>

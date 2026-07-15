@@ -24,7 +24,7 @@ export async function sendSmsAction(mobile_number: string): Promise<SendSmsState
     })
 
     setSmsCode(mobile_number, code)
-
+    console.log("@@@@@@: ", mobile_number , " ---> " , code );
     return { success: true, message: 'کد تایید با موفقیت ارسال شد.' }
   } catch (error) {
     console.error('Send SMS error:', error)

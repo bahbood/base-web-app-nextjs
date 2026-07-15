@@ -50,6 +50,10 @@ export type logined_User_Info = {
   avatar?: string;
   mobile?: string;
   email?: string;
+  role?: string;
+  store_active?: boolean;
+  news_agency_active?: boolean;
+  serviceman_active?: boolean;
 };
 
 export enum flyoutPageEnum{ login , logout , register , profile , resetPassword , ChangePassword , sideMenu }

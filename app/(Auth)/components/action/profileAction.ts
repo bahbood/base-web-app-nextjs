@@ -89,7 +89,10 @@ export async function ProfileAction(prevState: ProfileState, formData: FormData)
       family.trim(),
       (payload.avatar as string) || '',
       mobile.trim(),
-      email.trim()
+      email.trim(),
+      payload.store_active as boolean,
+      payload.news_agency_active as boolean,
+      payload.serviceman_active as boolean
     )
 
     if (!sessionResult.success) {

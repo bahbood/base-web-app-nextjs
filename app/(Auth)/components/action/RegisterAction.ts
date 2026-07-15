@@ -10,7 +10,7 @@
 
 import captchaValidationAction from '@/app/components/(captcha)/action/captchaValidationAction'
 import { db , } from '@/app/db'
-import { eq } from 'drizzle-orm'
+import { eq, or } from 'drizzle-orm'
 import { users } from '@/app/db/schema'
 import bcrypt from 'bcryptjs'
 import { verifySmsCode } from '@/app/(Auth)/lib/smsCache'
@@ -108,29 +108,42 @@ export type RegisterState = {
     }
   }
  
-  // 4. بررسی تکراری نبودن نام کاربری و ذخیره در دیتابیس
+  // 4. بررسی تکراری نبودن نام کاربری و شماره موبایل و ذخیره در دیتابیس
 
 
    try {
-     // 5. جستجوی کاربر در دیتابیس
+     //  جستجوی کاربر در دیتابیس
      const existingUser = await db
        .select()
        .from(users)
-       .where(eq(users.user_name, userName))
-       .limit(1);
+       .where(
+         or(
+          eq(users.user_name, userName),
+          eq(users.mobile_number, mobile_number)
+          )
+       );
+       
  
-     if (existingUser.length > 0) {
-       return {
-         success: false,
-         errors:{
-        userName: "نام کاربری : لطفا از یک نام کاربری دیگر استفاده نمایید . این نام کاربری رزرو شده یا قبلا استفاده شده است ." ,
-      },
-         values:{ 
-         userName:userName,
-         mobile_number:mobile_number
+     const errors: Record<string, string> = {};
+
+        if (existingUser.some(u => u.user_name === userName)) {
+          errors.userName = "این نام کاربری قبلاً استفاده شده است.";
         }
-       };
-     }
+
+        if (existingUser.some(u => u.mobile_number === mobile_number)) {
+          errors.mobile_number = "این شماره موبایل قبلاً ثبت شده است.";
+        }
+
+        if (Object.keys(errors).length) {
+          return {
+            success: false,
+            errors,
+            values: {
+              userName,
+              mobile_number,
+            },
+          };
+        }
  
      // 6. هش کردن رمز عبور
      const hashedPassword = await bcrypt.hash(password, 10);

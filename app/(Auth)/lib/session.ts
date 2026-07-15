@@ -24,7 +24,10 @@ export async function createSession(
   family: string,
   avatar: string,
   mobile?: string,
-  email?: string
+  email?: string,
+  store_active?: boolean,
+  news_agency_active?: boolean,
+  serviceman_active?: boolean
 ): Promise<{ success: boolean; user?: logined_User_Info }> {
   try {
     let expireTime = 0
@@ -45,7 +48,10 @@ export async function createSession(
       family,
       avatar,
       mobile,
-      email
+      email,
+      store_active,
+      news_agency_active,
+      serviceman_active
     }, expiresAt)
 
     const cookieStore = await cookies()
@@ -65,6 +71,10 @@ export async function createSession(
         avatar: avatar || '',
         mobile: mobile || '',
         email: email || '',
+        role: role || '',
+        store_active: store_active || false,
+        news_agency_active: news_agency_active || false,
+        serviceman_active: serviceman_active || false,
       }
     }
   } catch (error) {
@@ -117,7 +127,7 @@ export async function updateSession():Promise<{ success: boolean; user?: logined
     }
 
     const expiresAt = new Date(Date.now() + expireTime)
-    const newsession = await encryptSession({ userId, userName, role, isActive , expiresAt ,name,family,avatar, mobile, email}, expiresAt)
+    const newsession = await encryptSession({ userId, userName, role, isActive , expiresAt ,name,family,avatar, mobile, email, store_active: payload.store_active, news_agency_active: payload.news_agency_active, serviceman_active: payload.serviceman_active}, expiresAt)
     const cookieStore = await cookies()
 
     cookieStore.set('session', newsession, {
@@ -190,6 +200,10 @@ export async function getUserFromSession(): Promise<logined_User_Info | null> {
       avatar: payload.avatar as string || '',
       mobile: payload.mobile as string || '',
       email: payload.email as string || '',
+      role: payload.role as string || '',
+      store_active: payload.store_active as boolean || false,
+      news_agency_active: payload.news_agency_active as boolean || false,
+      serviceman_active: payload.serviceman_active as boolean || false,
     }
   } catch (error) {
     console.error('Error getting user from session:', error)

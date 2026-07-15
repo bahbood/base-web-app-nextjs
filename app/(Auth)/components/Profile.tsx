@@ -104,8 +104,8 @@ export default function Profile( {ref }: {ref?:Ref<ProfileHandlerRef>} ) {
                                       <label className="text-right text-[10px] pr-2 text-red-600">{state?.errors?.mobile}</label>
                                   )}
                               </div>
-                              <input id="mobile" name="mobile" type="text" placeholder="mobile" dir="ltr"
-                                  required  defaultValue={user?.mobile || state?.values?.mobile || ""}
+                              <input id="mobile"  type="text"  dir="ltr"
+                                  readOnly  defaultValue={user?.mobile || state?.values?.mobile || ""}
                                   className="block w-full rounded-md px-3 pt-3 pb-2 text-xs outline-1 outline-gray-300"
                               />
                           </div>
@@ -138,7 +138,7 @@ export default function Profile( {ref }: {ref?:Ref<ProfileHandlerRef>} ) {
                               />
                           </div> */}
 
-                           
+                          
                          
                         {/* captcha ---------- */}
                           <div className="flex flex-col w-[95%] sm:w-[85%] gap-1 mt-2">

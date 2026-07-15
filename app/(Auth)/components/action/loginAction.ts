@@ -44,6 +44,10 @@ export async function loginAction(prevState: LoginState, formData: FormData): Pr
    const password_validation: boolean =  /^[a-zA-Z0-9@#$%^&]{6,20}$/.test(password)
    const userCaptchaInput_validation: boolean =/^[ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789]{5}$/.test(userCaptchaInput)
 
+   // test
+console.log("loginAction : u: ",userName,"p: ",password ,"cpid :" ,captchaId , "ucpIn : " ,userCaptchaInput)
+console.log("validation : uV: ",userName_validation,"pV: ",password_validation ,"cpV :" ,userCaptchaInput_validation ,)
+
   if (!userName_validation || !password_validation || !captchaId || !userCaptchaInput_validation) {
     
     // console.log(formData)
@@ -124,7 +128,8 @@ export async function loginAction(prevState: LoginState, formData: FormData): Pr
     // ساخت کوکی و ارسال به مرورگر
     const sessionResult=await createSession( foundUser.id , foundUser.user_name ,foundUser.role as string , foundUser.is_active as boolean 
       ,foundUser.name as string,foundUser.family as string,foundUser.avatar as string
-      ,foundUser.mobile_number as string,foundUser.email as string);
+      ,foundUser.mobile_number as string,foundUser.email as string
+      ,foundUser.store_active as boolean,foundUser.news_agency_active as boolean,foundUser.serviceman_active as boolean);
 
     if( !sessionResult ){
        return {

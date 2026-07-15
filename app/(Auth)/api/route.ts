@@ -38,13 +38,17 @@ export async function Send_SMS({
   verify_code: string;
 }) {
   const apiKey = process.env.SMS_API_KEY;
+  const lineNumber = process.env.SMS_LINE_NUMBER;
 
   if (!apiKey) {
     throw new Error("SMS_IR_API_KEY is not defined.");
   }
+  if (!lineNumber) {
+    throw new Error("SMS_LINE_NUMBER is not defined.");
+  }
 
   const response = await fetch(
-    "https://api.sms.ir/v1/send/verify",
+    "https://api.sms.ir/v1/send/bulk",
     {
       method: "POST",
       headers: {
@@ -53,7 +57,7 @@ export async function Send_SMS({
         "x-api-key": apiKey,
       },
       body: JSON.stringify({
-        lineNumber: mobile_number,
+        lineNumber: lineNumber,
         messageText : verify_code ,
         "mobiles": [
           mobile_number,
