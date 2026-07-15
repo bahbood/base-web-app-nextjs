@@ -238,11 +238,11 @@ export async function getUserFromSession(): Promise<logined_User_Info | null> {
 
 
 ////encrypt
-  export async function encryptSession(payload: SessionPayload, expiresAt?: Date): Promise<string> {
+  export async function encryptSession(payload: SessionPayload, expiresAt: Date): Promise<string> {
   return new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime(expiresAt ?? Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60)
+    .setExpirationTime(expiresAt )
     .sign(encodedKey)
 }
 ////encrypt
