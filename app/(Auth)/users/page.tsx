@@ -15,8 +15,7 @@ export const metadata = {
 const PAGE_SIZE = 10
 
 export default async function UsersListPage({ searchParams }: { searchParams: Promise<{ search?: string; page?: string }> }) {
-  const isAdmin = await checkRoleAuthorisation(['admin'])
-  if (!isAdmin) redirect('/')
+  // for admin only - check in proxy
 
   const { search, page: pageStr } = await searchParams
   const currentPage = Math.max(1, Number(pageStr) || 1)

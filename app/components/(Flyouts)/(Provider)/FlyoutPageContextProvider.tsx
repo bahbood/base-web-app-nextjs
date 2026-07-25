@@ -45,6 +45,7 @@ interface I_FlyoutPageProviderContext{
 }
   // تعریف نوع کاربر
 export type logined_User_Info = {
+  id?:number;
   name?: string;
   family?: string;
   avatar?: string;

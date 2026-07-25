@@ -1,34 +1,12 @@
-import { db } from '@/app/db'
-import { stores } from '@/app/db/schema'
-import { eq } from 'drizzle-orm'
-import { cookies } from 'next/headers'
-import { decryptSession } from '@/app/(Auth)/lib/session'
-import { redirect } from 'next/navigation'
+import {  getUserFromSession } from '@/app/(Auth)/lib/session'
 import StoreProfileForm from './StoreProfileForm'
 
-async function getSessionUser() {
-  const cookieStore = await cookies()
-  const sessionCookie = cookieStore.get('session')?.value
-  if (!sessionCookie) return null
 
-  const payload = await decryptSession(sessionCookie)
-  return payload
-}
-
-async function getStoreByUserId(userId: number) {
-  const result = await db
-    .select()
-    .from(stores)
-    .where(eq(stores.user_id, userId))
-    .limit(1)
-  return result[0] || null
-}
 
 export default async function StoreProfilePage() {
-  const session = await getSessionUser()
-  if (!session) redirect('/')
-
-  const store = await getStoreByUserId(Number(session.userId))
+ 
+const userInfo= await getUserFromSession()
+  const store = userInfo?.store_active ? userInfo.id : undefined
 
   return (
     <div className="min-h-screen bg-gray-50">

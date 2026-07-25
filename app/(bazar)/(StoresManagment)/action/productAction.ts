@@ -4,7 +4,7 @@ import { db } from '@/app/db'
 import { products } from '@/app/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { cookies } from 'next/headers'
-import { decryptSession } from '@/app/(Auth)/lib/session'
+import { decryptSession, getUserFromSession } from '@/app/(Auth)/lib/session'
 import { getStoreByUserId } from '../../lib/getStoreByUserId'
 
 export type ProductActionState = {
@@ -96,14 +96,16 @@ export async function updateProductAction(prevState: ProductActionState, formDat
     return { success: false, errors, values }
   }
 
-  const cookieStore = await cookies()
-  const sessionCookie = cookieStore.get('session')?.value
-  if (!sessionCookie) return { success: false, errors: { message: 'کاربر وارد سیستم نیست' }, values }
-
-  const payload = await decryptSession(sessionCookie)
-  if (!payload) return { success: false, errors: { message: 'نشست نامعتبر' }, values }
-
-  const userId = Number(payload.userId)
+  const userinfo=await getUserFromSession()
+  
+    const userId = userinfo?.id
+  
+    if( !userId )
+    {
+      return { success: false, errors: { message: '    !!! نشست نامعتبر ، کاربری لاگین نکرده' }, values }
+    }
+    
+  
   const store = await getStoreByUserId(userId)
   if (!store) return { success: false, errors: { message: 'فروشگاهی یافت نشد' }, values }
 

@@ -66,8 +66,9 @@ export async function createSession(
     return {
       success: true,
       user: {
-        name,
-        family,
+        id:userId,
+        name:name,
+        family:family,
         avatar: avatar || '',
         mobile: mobile || '',
         email: email || '',
@@ -195,6 +196,7 @@ export async function getUserFromSession(): Promise<logined_User_Info | null> {
 
     // برگرداندن اطلاعات کاربر
     return {
+      id: payload.userId ,
       name: payload.name as string || payload.userName as string,
       family: payload.family as string || '',
       avatar: payload.avatar as string || '',

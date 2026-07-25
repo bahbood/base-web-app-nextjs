@@ -1,10 +1,10 @@
+// app/(Auth)/users/addUser/page.tsx
 import { redirect } from 'next/navigation'
 import { checkRoleAuthorisation } from '@/app/(Auth)/lib/session'
 import AddUserForm from './AddUserForm'
 
 export default async function AddUserPage() {
-  const isAdmin = await checkRoleAuthorisation(['admin'])
-  if (!isAdmin) redirect('/')
+ // for admin only check in proxy
 
   return (
     <div className="min-h-screen bg-gray-50">

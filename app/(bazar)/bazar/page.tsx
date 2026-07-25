@@ -1,8 +1,6 @@
 import { db } from '@/app/db'
 import { stores, products } from '@/app/db/schema'
 import { and, eq, lt, gt, sql } from 'drizzle-orm'
-import Link from 'next/link'
-import Image from 'next/image'
 
 async function getActiveProducts() {
   const now = new Date()

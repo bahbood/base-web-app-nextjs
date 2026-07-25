@@ -1,24 +1,22 @@
 import { cookies } from 'next/headers'
-import { decryptSession } from '@/app/(Auth)/lib/session'
+import { decryptSession, getUserFromSession } from '@/app/(Auth)/lib/session'
 import { getStoreByUserId } from '../../../lib/getStoreByUserId'
 import { redirect } from 'next/navigation'
 import AddProductForm from './AddProductForm'
 
-async function checkAccess() {
-  const cookieStore = await cookies()
-  const sessionCookie = cookieStore.get('session')?.value
-  if (!sessionCookie) return false
+async function checkStoreExist() {
+  
 
-  const payload = await decryptSession(sessionCookie)
-  if (!payload) return false
+  const userInfo = await getUserFromSession()
+  if (!userInfo) return false
 
-  const store = await getStoreByUserId(Number(payload.userId))
-  return !!store
+ 
+  return !!userInfo
 }
 
 export default async function AddProductPage() {
-  const hasAccess = await checkAccess()
-  if (!hasAccess) redirect('/')
+  const StoreExist = await checkStoreExist()
+  if (!StoreExist) redirect('/')
 
   return (
     <div className="min-h-screen bg-gray-50">

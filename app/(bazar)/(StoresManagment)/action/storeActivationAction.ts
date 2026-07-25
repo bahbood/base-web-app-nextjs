@@ -4,8 +4,7 @@ import captchaValidationAction from '@/app/components/(captcha)/action/captchaVa
 import { db } from '@/app/db'
 import { stores } from '@/app/db/schema'
 import { eq } from 'drizzle-orm'
-import { cookies } from 'next/headers'
-import { decryptSession } from '@/app/(Auth)/lib/session'
+import {  getUserFromSession } from '@/app/(Auth)/lib/session'
 
 export type StoreActivationState = {
   success: boolean
@@ -28,18 +27,14 @@ export async function storeActivationAction(prevState: StoreActivationState, for
     return { success: false, errors: { userCaptcha: 'کد امنیتی بدرستی وارد نشده' } }
   }
 
-  const cookieStore = await cookies()
-  const sessionCookie = cookieStore.get('session')?.value
-  if (!sessionCookie) {
-    return { success: false, errors: { message: 'کاربر وارد سیستم نیست' } }
-  }
-
-  const payload = await decryptSession(sessionCookie)
-  if (!payload) {
-    return { success: false, errors: { message: 'نشست نامعتبر' } }
-  }
-
-  const userId = Number(payload.userId)
+ const userinfo=await getUserFromSession()
+ 
+   const userId = userinfo?.id
+ 
+   if( !userId )
+   {
+     return { success: false, errors: { message: '    !!! نشست نامعتبر ، کاربری لاگین نکرده' } }
+   }
 
   try {
     const existingStore = await db

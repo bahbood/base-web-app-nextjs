@@ -1,19 +1,10 @@
 import { db } from '@/app/db'
 import { stores } from '@/app/db/schema'
 import { eq } from 'drizzle-orm'
-import { cookies } from 'next/headers'
-import { decryptSession } from '@/app/(Auth)/lib/session'
-import { redirect } from 'next/navigation'
+import {  getUserFromSession } from '@/app/(Auth)/lib/session'
 import ActivationForm from './ActivationForm'
 
-async function getSessionUser() {
-  const cookieStore = await cookies()
-  const sessionCookie = cookieStore.get('session')?.value
-  if (!sessionCookie) return null
 
-  const payload = await decryptSession(sessionCookie)
-  return payload
-}
 
 async function getStoreByUserId(userId: number) {
   const result = await db
@@ -25,10 +16,16 @@ async function getStoreByUserId(userId: number) {
 }
 
 export default async function StoreActivationPage() {
-  const session = await getSessionUser()
-  if (!session) redirect('/')
+  const userinfo=await getUserFromSession()
+  
+    const userId = userinfo?.id
+  
+    if( !userId )
+    {
+      return { success: false, errors: { message: '    !!! نشست نامعتبر ، کاربری لاگین نکرده' },  }
+    }
 
-  const store = await getStoreByUserId(Number(session.userId))
+  const store = await getStoreByUserId(userId)
 
   return (
     <div className="min-h-screen bg-gray-50">

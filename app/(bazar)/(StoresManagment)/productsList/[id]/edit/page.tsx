@@ -1,21 +1,23 @@
 import { db } from '@/app/db'
 import { products } from '@/app/db/schema'
 import { eq, and } from 'drizzle-orm'
-import { cookies } from 'next/headers'
-import { decryptSession } from '@/app/(Auth)/lib/session'
+import {  getUserFromSession } from '@/app/(Auth)/lib/session'
 import { getStoreByUserId } from '../../../../lib/getStoreByUserId'
-import { notFound, redirect } from 'next/navigation'
+import {  redirect } from 'next/navigation'
 import EditProductForm from './EditProductForm'
 
 async function getProduct(productId: number) {
-  const cookieStore = await cookies()
-  const sessionCookie = cookieStore.get('session')?.value
-  if (!sessionCookie) return null
+ const userinfo=await getUserFromSession()
+ 
+   const userId = userinfo?.id
+ 
+   if( !userId )
+   {
+     return { success: false, errors: { message: '    !!! نشست نامعتبر ، کاربری لاگین نکرده' },  }
+   }
+   
 
-  const payload = await decryptSession(sessionCookie)
-  if (!payload) return null
-
-  const store = await getStoreByUserId(Number(payload.userId))
+  const store = await getStoreByUserId(userId)
   if (!store) return null
 
   const result = await db

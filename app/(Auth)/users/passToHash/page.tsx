@@ -11,12 +11,14 @@ export default function PassToHashPage() {
   const router = useRouter()
   const [password, setPassword] = useState('')
   const [hashedPassword, setHashedPassword] = useState('')
-
-  useEffect(() => {
-    checkRoleAuthorisation(['admin']).then((ok) => {
-      if (!ok) router.replace('/')
-    })
-  }, [router])
+ 
+  // for admin only - check in proxy
+  
+  // useEffect(() => {
+  //   checkRoleAuthorisation(['admin']).then((ok) => {
+  //     if (!ok) router.replace('/')
+  //   })
+  // }, [router])
 
   const handleHash = async () => {
     if (!password) return
