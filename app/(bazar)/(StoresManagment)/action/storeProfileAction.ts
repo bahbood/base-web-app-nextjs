@@ -6,6 +6,7 @@ import { stores } from '@/app/db/schema'
 import { eq } from 'drizzle-orm'
 import {  getUserFromSession } from '@/app/(Auth)/lib/session'
 
+
 export type StoreProfileState = {
   success: boolean
   errors?: {

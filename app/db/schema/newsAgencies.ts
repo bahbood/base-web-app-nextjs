@@ -1,7 +1,7 @@
 // app/db/schema/newsAgencies.ts
 import { sql } from 'drizzle-orm';
 import { boolean, decimal, pgEnum, pgTable, serial, text, timestamp, varchar,check } from 'drizzle-orm/pg-core';
-
+export const dynamic = 'force-dynamic'
 
 export const newsAgencies = pgTable('newsAgencies', {
   id: serial('id').primaryKey(),

@@ -7,6 +7,7 @@ import { getStoreByUserId } from '../../lib/getStoreByUserId'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import ToggleButton from './ToggleButton'
+export const dynamic = 'force-dynamic'
 
 async function getStoreProducts() {
   const cookieStore = await cookies()

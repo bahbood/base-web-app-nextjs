@@ -1,6 +1,7 @@
 import { db } from '@/app/db'
 import { stores, products } from '@/app/db/schema'
 import { and, eq, lt, gt, sql } from 'drizzle-orm'
+export const dynamic = 'force-dynamic'
 
 async function getActiveProducts() {
   const now = new Date()

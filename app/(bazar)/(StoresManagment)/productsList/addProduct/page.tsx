@@ -1,8 +1,7 @@
-import { cookies } from 'next/headers'
-import { decryptSession, getUserFromSession } from '@/app/(Auth)/lib/session'
-import { getStoreByUserId } from '../../../lib/getStoreByUserId'
+import {  getUserFromSession } from '@/app/(Auth)/lib/session'
 import { redirect } from 'next/navigation'
 import AddProductForm from './AddProductForm'
+export const dynamic = 'force-dynamic'
 
 async function checkStoreExist() {
   

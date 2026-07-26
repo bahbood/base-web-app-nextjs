@@ -3,7 +3,7 @@ import { stores } from '@/app/db/schema'
 import { eq } from 'drizzle-orm'
 import {  getUserFromSession } from '@/app/(Auth)/lib/session'
 import ActivationForm from './ActivationForm'
-
+export const dynamic = 'force-dynamic'
 
 
 async function getStoreByUserId(userId: number) {
@@ -22,7 +22,7 @@ export default async function StoreActivationPage() {
   
     if( !userId )
     {
-      return { success: false, errors: { message: '    !!! نشست نامعتبر ، کاربری لاگین نکرده' },  }
+      return <div></div>
     }
 
   const store = await getStoreByUserId(userId)

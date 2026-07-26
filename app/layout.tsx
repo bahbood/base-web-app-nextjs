@@ -6,6 +6,8 @@ import { FlyoutPageProvider } from "./components/(Flyouts)/(Provider)/FlyoutPage
 import HeaderCMP from "./components/HeaderCMP";
 import { getUserFromSession } from "./(Auth)/lib/session";
 
+export const dynamic = 'force-dynamic';
+
 
 const myFont = localFont({
   src: './fonts/Vazirmatn-RD-FD-Regular.woff2',

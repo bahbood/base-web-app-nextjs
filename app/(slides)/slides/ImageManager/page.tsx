@@ -1,5 +1,6 @@
 import SlideImageManager from '../../components/SlideImageManager'
 import { getAllSlideImages } from '../../lib/slideImagesDb'
+export const dynamic = 'force-dynamic'
 
 export default async function SlideImageManagerPage() {
   const images = await getAllSlideImages()

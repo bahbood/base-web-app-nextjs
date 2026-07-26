@@ -1,8 +1,6 @@
 // app/(Auth)/users/addUser/page.tsx
-import { redirect } from 'next/navigation'
-import { checkRoleAuthorisation } from '@/app/(Auth)/lib/session'
 import AddUserForm from './AddUserForm'
-
+export const dynamic = 'force-dynamic'
 export default async function AddUserPage() {
  // for admin only check in proxy
 

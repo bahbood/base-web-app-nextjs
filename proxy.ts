@@ -1,7 +1,7 @@
 // proxy.ts
 import { NextRequest, NextResponse } from 'next/server'
-import { decryptSession, encryptSession,  updateSession } from '@/app/(Auth)/lib/session'
-import { cookies } from 'next/headers'
+import { getSessionFromAction } from './app/(Auth)/lib/session-action'
+import { decryptSession } from './app/(Auth)/lib/session'
 
 // 1. Specify protected and public routes
 const admin_ProtectedRoutes:string[] = ['app/(Auth)/users']
@@ -30,8 +30,9 @@ export default async function proxy(req: NextRequest) {
   // فقط برای مسیرهایی که نیاز به بررسی سشن دارند
   if (isPublicRoute || isProtectedRoute) {
     try {
-      const cookie = (await cookies()).get('session')?.value
-      const session = await decryptSession(cookie)
+      
+     const sessionCookie = req.cookies.get('session')?.value
+     const session = await decryptSession(sessionCookie)
 
       // 4. Redirect unauthenticated users from protected routes
       if (isProtectedRoute && !session?.userId) {

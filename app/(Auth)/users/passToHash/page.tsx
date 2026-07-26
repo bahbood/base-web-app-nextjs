@@ -4,8 +4,7 @@
 import { useState } from 'react'
 import bcrypt from 'bcryptjs'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import { checkRoleAuthorisation } from '@/app/(Auth)/lib/session'
+export const dynamic = 'force-dynamic'
 
 export default function PassToHashPage() {
   const router = useRouter()

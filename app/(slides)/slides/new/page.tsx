@@ -1,5 +1,6 @@
 import SlideForm from '../../components/SlideForm'
 import { createSlide } from '../../actions/slidesActions'
+export const dynamic = 'force-dynamic'
 
 export default function NewSlidePage() {
   return (
