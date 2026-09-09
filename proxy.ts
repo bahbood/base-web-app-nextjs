@@ -12,7 +12,7 @@ const services_ProtectedRoutes:string[] = []
 const publicRoutes :string[] = ['/','app/(bazar)/bazar']
 
 const AdminPathes = ["/newsAgenciesList"]
-export const runtime = "edge";
+
 export default async function proxy(req: NextRequest) {
   
   // 2. Check if the current route is protected or public
@@ -66,6 +66,6 @@ export default async function proxy(req: NextRequest) {
 }
 
 // Routes Middleware should not run on
-export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
-}
+// export const config = {
+//   matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
+// }

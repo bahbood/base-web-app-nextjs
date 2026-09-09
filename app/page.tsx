@@ -17,7 +17,9 @@ export default async function Home() {
       </div>
       {/* 16/9   9/13->9/11 */}
       <div id="L" className=" landscape:w-[75%] portrait:w-full    ">
+        { slides &&
         <MainCarousel key={slides.length} className=" landscape:w-full  landscape:aspect-16/9 portrait:w-full  portrait:aspect-9/11  mx-auto" slides={slides}/>
+        }
       </div>
      
     </div>
