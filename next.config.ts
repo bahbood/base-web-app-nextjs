@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
       "./node_modules/pg-cloudflare/esm/**",
     ],
   },
+
+  /* config options here */
+  // cacheComponents: true,
 };
 
 export default nextConfig;

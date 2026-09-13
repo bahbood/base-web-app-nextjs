@@ -15,6 +15,7 @@
     "db:addSeed": "tsx ./app/db/seed.ts"
   },
   "dependencies": {
+    "@opennextjs/cloudflare": "^1.19.9",
     "bcryptjs": "^3.0.2",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
@@ -24,13 +25,13 @@
     "framer-motion": "^12.38.0",
     "jalaali-js": "^1.1.0",
     "jose": "^6.2.3",
-    "next": "^16.2.6",
+    "next": "^16.2.11",
+    "pg": "^8.20.0",
     "postgres": "^3.4.9",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "sharp": "^0.34.5",
-    "zod": "^4.4.3",
-    "pg": "^8.20.0" 
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -43,7 +44,7 @@
     "drizzle-kit": "^0.31.10",
     "esbuild": "^0.28.1",
     "eslint": "^9",
-    "eslint-config-next": "16.2.6",
+    "eslint-config-next": "^16.2.11",
     "tailwindcss": "^4",
     "typescript": "^5",
     "wrangler": "^4.114.0"
