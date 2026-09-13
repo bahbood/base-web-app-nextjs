@@ -1,7 +1,7 @@
 // app/components/(captchCMP)/action/createCaptchaImageAction.ts
 'use server';
 
-import sharp from 'sharp';
+// import sharp from 'sharp';
 import { randomUUID } from 'crypto';
 
 // کش ساده سراسری (در محیط production از Redis استفاده کنید)
@@ -111,11 +111,12 @@ export async function createCaptchaImageAction(length: number = 5) {
   svgString += `</svg>`;
   
   // تبدیل SVG به PNG
-  const buffer = await sharp(Buffer.from(svgString))
-    .png()
-    .toBuffer();
+  // const buffer = await sharp(Buffer.from(svgString))
+  //   .png()
+  //   .toBuffer();
   
-  const image = `data:image/png;base64,${buffer.toString('base64')}`;
+  // const image = `data:image/png;base64,${buffer.toString('base64')}`;
+  const image = `data:image/svg+xml;base64,${Buffer.from(svgString).toString('base64')}`;
   
   // تولید ID یکتا و ذخیره در کش با زمان انقضای ۲ دقیقه
   const captchaId = randomUUID();
