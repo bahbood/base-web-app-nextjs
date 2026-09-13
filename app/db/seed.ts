@@ -19,7 +19,7 @@ async function main() {
           },
           {
             user_name:"mahmood", password:hashedPass,role:"user",     name:"منوت",family:"",avatar:"default",is_active:true ,
-            mobile_number:"09153754329" , mobile_number_isvalid:true , email:"a@a.com", email_isvalid:true , 
+            mobile_number:"09221324329" , mobile_number_isvalid:true , email:"a@a.com", email_isvalid:true , 
             news_agency_active:true , news_agency_pin:hashedPass , store_active:true,store_pin:hashedPass , serviceman_active:true,serviceman_pin:hashedPass
           }
       ]).onConflictDoNothing({target: users.user_name }); // برگردونه رکورد درج شده رو
